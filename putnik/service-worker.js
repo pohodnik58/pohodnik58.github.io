@@ -32,9 +32,9 @@ var filesToCache = [
 	'assets/js/crel.min.js',
 	'assets/js/eWysiwyg.js',
 	'assets/js/jquery-1.12.0.min.js',
-	//'assets/js/main.js',
+	'assets/js/main.js',
 	'assets/js/materialize.min.js',
-	//'assets/css/main.css',
+	'assets/css/main.css',
 	'assets/css/materialize.css',
 	'assets/css/materialize.min.css',
 	'assets/css/normalize.css'

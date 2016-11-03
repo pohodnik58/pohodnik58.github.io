@@ -3,6 +3,7 @@ var Content = document.getElementById('content');
 var Navbar	= document.getElementById('navbar');
 var Sidebar = document.getElementById('sidebar');
 var Title	= document.getElementById('navTitle');
+var Footer	= document.getElementById('footer');
 searchNavbar= document.getElementById('searchNavbar');
 baseNavbar	= document.getElementById('baseNavbar');
 navRight	= document.getElementById('navRight');
@@ -17,6 +18,9 @@ window.addEventListener('load', function() {
         console.log('save')
       }
     });
+	
+	Footer.style.display = 'none'
+	app.navigate()
 });
 
 
@@ -38,6 +42,91 @@ var app = {
 			   hashParams[d(e[1])] = d(e[2]);
 
 			console.log( hashParams );
+			
+			if(hashParams.v){
+			
+				switch(hashParams.v){
+					case 'travels':
+						app.travels.init();
+					break;
+					case 'travel':
+						if(hashParams.id){
+							app.travels.notesLoad(hashParams.id)
+						}
+					break;
+					
+					case 'travel_add':
+						app.travels.add()
+					break;
+					
+					case 'notes':
+						if(hashParams.id_travel){
+							app.notes.init(hashParams.id_travel)
+						}
+					break;
+					case 'note':
+						if(hashParams.id){
+							app.notes.one(hashParams.id)
+						}
+					break;
+					case 'note_add':
+						if(hashParams.id_travel){
+							app.notes.add(hashParams.id_travel)
+						}						
+					break;
+					
+					
+					case 'export':
+						app.db.transaction(function(tx) {
+						
+						var Res = {}
+						Content.innerHTML = 'Загрузка заметок';
+							tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
+							function(tx, result) {
+								Res.notes = []; 
+								for(var i=0; i<result.rows.length; i++){
+									Res.notes.push(result.rows[i])
+								}
+								
+								Content.innerHTML = 'Загрузка путешествий';
+							tx.executeSql(" SELECT id, name, description, date FROM travel", [],
+							function(tx, result) {
+								Res.travels = []; 
+								for(var i=0; i<result.rows.length; i++){
+									Res.travels.push(result.rows[i])
+								}
+								console.info();
+								Content.innerHTML = 'Отпавка...';
+								$.post("http://pohodnik58.ru/putnik_export.php",{data:JSON.stringify(Res)},function(d){
+									Content.innerHTML = d;
+								}).fail(function(e) {
+    Content.innerHTML = "Ошибка." + JSON.stringify(e);
+  })
+								
+							},app.sqlError)	
+								
+								
+								
+								
+								
+							},app.sqlError)	
+
+
+							
+							
+							
+							
+						})
+					break;
+					
+					
+					
+					
+				}
+			
+			
+			}
+			
 		
 	},
 	msg: function(str, duration, c, callback){
@@ -192,7 +281,9 @@ console.error(tx,res)
 		';*/
 		//Sidebar.appendChild(crEl('li', crEl('a',{c:'subheader indigo  darken-2 white-text'}, 'Путник 0.1')))
 		
-		Sidebar.appendChild(crEl('li', crEl('a',{c:'waves-effect',href:'javascript:void(0)', e:{click: function(){app.travels.init()}}}, 'Путешествия')));
+		Sidebar.appendChild(crEl('li', crEl('a',{c:'waves-effect',href:'#v=travels'}, 'Путешествия')));
+		Sidebar.appendChild(crEl('li',{c:'divider'}))
+		Sidebar.appendChild(crEl('li', crEl('a',{c:'waves-effect',href:'#v=export'}, 'Экспорт')));
 		
 		Sidebar.appendChild(crEl('li',{c:'divider'}))
 		
@@ -200,13 +291,20 @@ console.error(tx,res)
 		
 			app.db.transaction(function(tx) {
 
-				tx.executeSql("DROP TABLE IF EXISTS travel", [], console.log, app.sqlError);
-				tx.executeSql("DROP TABLE IF EXISTS notes", [], null, app.sqlError);
+				tx.executeSql("DROP TABLE IF EXISTS travel", [], function(){
+				
+								tx.executeSql("DROP TABLE IF EXISTS notes", [], function(){
+								app.vibrate(500)
+				location.reload()
+				}, app.sqlError);
+				
+				}, app.sqlError);
+
 			
 				
 			});
 		
-		}}}, 'Очистить БД')));
+		}}}, 'Очистить всё')));/**/
 		//
 		
 		
@@ -242,9 +340,7 @@ app.travels = {
 		Content.innerHTML = "";
 		Content.appendChild(this.el.list);
 		Content.appendChild(
-			crEl('a',{ c:'btn-floating btn-large waves-effect waves-light red', id:'addBtn', s:'position:fixed;bottom: 45px; right: 24px;', href:'javascript:void(0)', e:{click: function(){
-				app.travels.add();
-			}}}, new MIcon('add',{c:'large'}))
+			crEl('a',{ c:'btn-floating btn-large waves-effect waves-light red', id:'addBtn', s:'position:fixed;bottom: 45px; right: 24px;', href:'#v=travel_add'}, new MIcon('add',{c:'large'}))
 		);
 		
 		
@@ -256,13 +352,11 @@ app.travels = {
 		var list = this.el.list;
 		function Travel(data){
 			var d = new Date(data.date*1000);
-			return crEl('a',{href:'javascript:void(0)', e:{click:function(){
-				app.travels.notesLoad(data)
-			}}, c:'collection-item avatar'},
+			return crEl('a',{href:'#v=notes&id_travel='+data.id, c:'collection-item avatar'},
 				new MIcon('landscape',{c:'circle ' + colors[Math.floor(Math.random()*colors.length)]}),
 				crEl('span',{c:'title'}, data.name),
 				crEl('p',
-					data.name,
+					data.description,
 					crEl('br'),
 					d.toLocaleDateString() + '\u00a0', crEl('small', d.toLocaleTimeString())
 				),
@@ -323,8 +417,7 @@ app.travels = {
 				if(!desc.length){app.msg('Введите описание'); $('#travel_add_desc').focus(); return;}
 				app.db.transaction(function(tx) {
 					tx.executeSql("INSERT INTO travel (name, description, date) values(?,?,?)", [name,desc, Math.round(new Date().getTime()/1000)], function(){
-					
-						app.travels.init()
+					location.href="#v=travels"
 					}, app.sqlError);
 				})
 				return false;
@@ -344,22 +437,28 @@ app.notes = {
 	el:{
 		list:crEl('div',{c:'collection'})
 	},
-	init: function(data){
+	init: function(id){
 		Content.innerHTML =''
-		if(data && data.name){
-			document.title = data.name;
-			Title.innerHTML = data.name;
-		}
+
+		
+		app.db.transaction(function(tx) {
+			tx.executeSql("SELECT name FROM travel where id=" + id, [], function(tx, result){
+				document.title = result.rows[0].name;
+				Title.innerHTML = result.rows[0].name;
+
+			}, app.sqlError);
+		})
+		
 		
 	Content.appendChild(this.el.list);
-		Content.appendChild(crEl('div',{c:'fixed-action-btn', s:'bottom: 45px; right: 24px;'},
-			crEl('a',{ c:'btn-floating btn-large waves-effect waves-light red', href:'javascript:void(0)', e:{click: function(){
-				app.notes.add(data.id)
-			}}}, new MIcon('add',{c:'large'}))
-		));
+
 	
 		navRight.innerHTML = ''
-		this.load(data.id)
+		
+		navRight.appendChild(crEl('li', crEl('a',{href:'#v=note_add&id_travel='+id,c:'waves-effect'},new MIcon('add'))));
+		
+		
+		this.load(id)
 		
 	},
 	
@@ -368,15 +467,13 @@ app.notes = {
 		var list = this.el.list;
 		function Note(data){
 			var d = new Date(data.date*1000);
-			return crEl('a',{href:'javascript:void(0)', e:{click:function(){
-				alert(132)
-			}}, c:'collection-item avatar'},
+			return crEl('a',{href:'#v=note&id='+data.id, c:'collection-item avatar'},
 				new MIcon('landscape',{c:'circle ' + colors[Math.floor(Math.random()*colors.length)]}),
 				crEl('span',{c:'title'}, d.toLocaleDateString() + '\u00a0', crEl('small', d.toLocaleTimeString())),
 				crEl('p',
 					data.lat.toString(), ' | ',data.lon.toString(),
 					crEl('br'),
-					data.note
+					data.note.length + '\u00a0букафф'
 				),
 				crEl('a',{href:'javascript:void(0)', c:'secondary-content'}, new MIcon('remove'))
 			)
@@ -394,83 +491,130 @@ app.notes = {
 			},app.sqlError)
 		}); 
 	},
+	one: function(id_note){
+		Content.innerHTML =''
+		app.db.transaction(function(tx) {
+		
+			console.log('NOTE' + id_note)
+			tx.executeSql(" SELECT id, note, order_item, date, lat, lon FROM notes WHERE id=" + id_note + "", [],
+			function(tx, result) {
+			console.log(result)
+				if(result && result.rows){
+					var nCon = crEl('div',{s:'padding:20px'})
+					Content.appendChild(nCon);
+					nCon.appendChild(crEl('h1',"Заметка #" + result.rows[0].id))
+					var d = new Date(result.rows[0].id*1000)
+					nCon.appendChild(crEl('div',"Дата: " , crEl('strong',d.toLocaleDateString() + '\u00a0' + d.toTimeString().substr(0,5))))
+					nCon.appendChild(crEl('div',"Координаты: " , crEl('a',{href:'geo:' + result.rows[0].lat+','+result.rows[0].lon}, result.rows[0].lat+ '\u00a0-\u00a0' + result.rows[0].lon)))
+					
+					var p = crEl('p')
+						p.innerHTML = result.rows[0].note;
+					nCon.appendChild(p)
+					Content.appendChild(nCon)
+				} else {
+				Content.innerHTML ='sdff'
+				}
+			},app.sqlError)
+		}); 
+		
+
+		
+		
 	
+	
+		navRight.innerHTML = ''
+		
+		navRight.appendChild(crEl('li', crEl('a',{href:'javascript:void(0)',c:'waves-effect', e:{click: function(){
+				history.back()
+		}}},new MIcon('keyboard_backspace'))));
+		
+
+	},	
 	add: function(id_travel){
 		Content.innerHTML ='';
 		
-		var editor = crEl('div',{contenteditable:true, s:'min-height:300px; padding:20px;'})
+		var editor = crEl('div',{contenteditable:true, s:'padding:20px;'})
 		Content.appendChild(editor)
 		document.title = "Добавление заметки";
 		Title.innerHTML = "Добавление заметки";
 		navRight.innerHTML = '';
 		
+		Footer.style.display = '';
+		Footer.innerHTML ='';
 		
-		var toolbar = crEl('ul',{c:'dropdown-content',  id:'noteEditorToolbar'},
-			crEl('li', crEl('a',{href:'javascript:void(0)', action:'insertH2'},'Вставить\u00a0заголовок'))
-		);
-		Content.appendChild(toolbar);
-	
-		navRight.appendChild(crEl('li', crEl('a',{href:'javascript:void(0)', id:'noteEditorToolbarMoreVert', c:'waves-effect dropdown-button', d:{activates:'noteEditorToolbar'}}, new MIcon('more_vert')) ))
-		$(".dropdown-button").dropdown({constrainwidth:false, constrain_width:false, constrainWidth:false, beloworigin:true}); 
+	/*	Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'undo',c:'waves-effect editor-toolbar-button'},new MIcon('undo')));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'redo',c:'waves-effect editor-toolbar-button'},new MIcon('redo')));
+		Footer.appendChild( document.createTextNode('|'));
+	*/	
 
-		/*		
-		navRight.appendChild(crEl('li',
-			crEl('a',{href:'javascript:void(0)', c:'waves-effect', id:'addHeader', e:{click: function(){
-				searchNavbar.classList.toggle('hide')
-				baseNavbar.classList.toggle('hide')
-				inp = document.getElementById("search");
-				inp.placeholder = 'Добавить заголовок'
-				inp.focus();
-				document.getElementById("searchForm").onsubmit = function(){
-					event.preventDefault()
-					editor.appendChild(crEl('h2', inp.value))
-					inp.value = "";
-					editor.focus()
-				searchNavbar.classList.toggle('hide')
-				baseNavbar.classList.toggle('hide')
-				}
-			}}}, new MIcon('title'))
-		))
-		navRight.appendChild(crEl('li',
-			crEl('a',{href:'javascript:void(0)', id:'addHeader', e:{click: function(){
-				searchNavbar.classList.toggle('hide')
-				baseNavbar.classList.toggle('hide')
-				inp = document.getElementById("search");
-				inp.placeholder = 'Добавить параграф'
-				inp.focus()
-				document.getElementById("searchForm").onsubmit = function(){
-				event.preventDefault()
-					editor.appendChild(crEl('p', inp.value))
-					inp.value = "";
-					editor.focus()
-								searchNavbar.classList.toggle('hide')
-				baseNavbar.classList.toggle('hide')
-				}
-			}}}, new MIcon('subject'))
-		))	
-		navRight.appendChild(crEl('li',
-			crEl('a',{href:'javascript:void(0)', id:'addtext', e:{click: function(){
-				searchNavbar.classList.toggle('hide')
-				baseNavbar.classList.toggle('hide')
-				inp = document.getElementById("search");
-				inp.placeholder = 'Добавить текст'
-				inp.focus();
-				document.getElementById("searchForm").onsubmit = function(){
-				event.preventDefault()
-					editor.appendChild(document.createTextNode(inp.value.toString()))
-					inp.value = "";
-					editor.focus()
-				searchNavbar.classList.toggle('hide')
-				baseNavbar.classList.toggle('hide')
-				}
-			}}}, new MIcon('short_text'))
-		))
-		*/
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'bold',c:'waves-effect editor-toolbar-button'},new MIcon('format_bold')));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'italic',c:'waves-effect editor-toolbar-button'},new MIcon('format_italic')));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'underline',c:'waves-effect editor-toolbar-button'},new MIcon('format_underlined')));
+		Footer.appendChild( document.createTextNode('|'));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'insertH2',c:'waves-effect editor-toolbar-button'},new MIcon('title')));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'insertImg',c:'waves-effect editor-toolbar-button'},new MIcon('insert_photo')));
+	
+	
+	
+	
+		function saveANote(id_travel, coords, text){	
+			app.db.transaction(function(tx) {
+				tx.executeSql(" SELECT order_item FROM notes WHERE id_travel=" + id_travel + " ORDER BY order_item DESC", [], function(tx1, result){
+					var max = 0;
+					if(result && result.rows && result.rows.length && result.rows[0] && result.rows[0].order_item){ max = result.rows[0].mm }
+					tx.executeSql("INSERT INTO notes (id_travel, note, order_item, date, lat, lon) values(?,?,?,?,?,?)", [id_travel,text, max, Math.round(new Date().getTime()/1000), coords.latitude, coords.longitude], function(){
+						
+						location.href = "#v=notes&id_travel="+id_travel
+						//app.notes.init({id:id_travel})
+					}, app.sqlError);
+					
+				},app.sqlError)
+			}); 
+		
+		}
+		
+	
+			
+		navRight.appendChild(crEl('li', crEl('a',{href:'javascript:void(0)',c:'waves-effect',e:{click: function(){
+
+					if (navigator.geolocation) {
+						navigator.geolocation.getCurrentPosition(function(position){
+							lat = position.coords.latitude
+							lon = position.coords.longitude
+							saveANote(id_travel, position.coords, editor.innerHTML)
+						});
+					} else {
+						saveANote(id_travel, {latitude:0, longitude:0}, editor.innerHTML)
+					}
+					Footer.style.display = 'none';
+			}}}, new MIcon('save')) ))
+
+
 		editor.focus()
+		function placeCaretAtEnd(el) {
+			el.focus();
+			if (typeof window.getSelection != "undefined"
+					&& typeof document.createRange != "undefined") {
+				var range = document.createRange();
+				range.selectNodeContents(el);
+				range.collapse(false);
+				var sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+			} else if (typeof document.body.createTextRange != "undefined") {
+				var textRange = document.body.createTextRange();
+				textRange.moveToElementText(el);
+				textRange.collapse(false);
+				textRange.select();
+			}
+			
+			el.scrollTop = el.scrollHeight || 10000
+			
+		}		
+	
 		
 		
-		
-        var Editor = new EWysiwyg(editor, toolbar);
+        var Editor = new EWysiwyg(editor, Footer);
 			Editor.init({
 			"insertH2": function(callback, txt, nodes){
 				searchNavbarLeftIcon.innerHTML = 'title'
@@ -486,16 +630,53 @@ app.notes = {
 					event.preventDefault()
 					callback(crEl('h2',inp.value));
 					inp.value = '';
-					editor.focus()
 					searchNavbar.classList.toggle('hide');
 					baseNavbar.classList.toggle('hide');
 					inp.type = 'search'
 					searchNavbarLeftIcon.innerHTML = 'search'
+					placeCaretAtEnd(editor)
+				}
+			},
+			
+			"insertImg":function(callback, txt, nodes){
+				searchNavbarLeftIcon.innerHTML = 'insert_photo'
+				searchNavbar.classList.toggle('hide')
+				baseNavbar.classList.toggle('hide')
+				inp = document.getElementById("search");
+				inp.type = 'file';
+				inp.accept = 'image/*'
+				inp.multiple = true;
+				inp.dispatchEvent(new MouseEvent('click', {
+					'view': window,
+					'bubbles': true,
+					'cancelable': true
+				}));	
+								
+				inp.onchange = function(){
+					var container = crEl('div',{c:'photo-container'});
+
+					for(var i=0; i<this.files.length; i++){
+						var oFReader = new FileReader();
+							oFReader.readAsDataURL(this.files[i]);
+							oFReader.onload = function (oFREvent) {
+								container.appendChild(crEl('img',{s:'max-width:100%', src:oFREvent.target.result, alt:'photo'+i}))
+							};
+					}
+
+
+					callback(container);
+					inp.value = '';
+					searchNavbar.classList.toggle('hide');
+					baseNavbar.classList.toggle('hide');
+					inp.type = 'search';
+					inp.accept = null;
+					searchNavbarLeftIcon.innerHTML = 'search'
+					placeCaretAtEnd(editor);
 				}
 				
 				
-						
-
+				document.getElementById("searchForm").onsubmit = null
+				
 			}
 
 			
@@ -514,48 +695,7 @@ app.notes = {
 		
 		
 		
-		
-		function saveANote(id_travel, coords, text){	
-			app.db.transaction(function(tx) {
-				tx.executeSql(" SELECT order_item FROM notes WHERE id_travel=" + id_travel + " ORDER BY order_item DESC", [], function(tx1, result){
-					var max = 0;
-					if(result && result.rows && result.rows.length && result.rows[0] && result.rows[0].order_item){ max = result.rows[0].mm }
-					tx.executeSql("INSERT INTO notes (id_travel, note, order_item, date, lat, lon) values(?,?,?,?,?,?)", [id_travel,text, max, Math.round(new Date().getTime()/1000), coords.latitude, coords.longitude], function(){
-						app.notes.init({id:id_travel})
-					}, app.sqlError);
-					
-				},app.sqlError)
-			}); 
-		
-		}
-		
-		
-		Content.appendChild(crEl('div',{c:'fixed-action-btn', s:'bottom: 45px; right: 24px;'},
-			crEl('a',{ c:'btn-floating btn-large waves-effect waves-light red', href:'javascript:void(0)', e:{click: function(){
-
-
-					if (navigator.geolocation) {
-						navigator.geolocation.getCurrentPosition(function(position){
-							lat = position.coords.latitude
-							lon = position.coords.longitude
-							
-							saveANote(id_travel, position.coords, editor.innerHTML)
-							
-						});
-					} else {
-						saveANote(id_travel, {latitude:0, longitude:0}, editor.innerHTML)
-					}
-					
-					
-					
-					
-					
-
-			
-			
-			}}}, new MIcon('save',{c:'large'}))
-		));
-		
+	
 		
 		
 		setTimeout(function(){editor.focus()},500)
