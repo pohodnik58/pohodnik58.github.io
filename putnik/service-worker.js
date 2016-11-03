@@ -34,6 +34,7 @@ var filesToCache = [
 	'assets/js/jquery-1.12.0.min.js',
 	'assets/js/main.js',
 	'assets/js/materialize.min.js',
+	'assets/js/gifshot.min.js',
 	'assets/css/main.css',
 	'assets/css/materialize.css',
 	'assets/css/materialize.min.css',
