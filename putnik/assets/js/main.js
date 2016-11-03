@@ -9,13 +9,37 @@ navRight	= document.getElementById('navRight');
 
 
 
+window.addEventListener('load', function() {
+    window.addEventListener('hashchange', app.navigate);
 
+    document.addEventListener('visibilitychange', function() {
+      if(document.hidden) {
+        console.log('save')
+      }
+    });
+});
 
 
 
 
 
 var app = {
+	navigate: function(hash){
+		
+
+			var hashParams = {};
+			var e,
+				a = /\+/g,  // Regex for replacing addition symbol with a space
+				r = /([^&;=]+)=?([^&;]*)/g,
+				d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+				q = window.location.hash.substring(1);
+
+			while (e = r.exec(q))
+			   hashParams[d(e[1])] = d(e[2]);
+
+			console.log( hashParams );
+		
+	},
 	msg: function(str, duration, c, callback){
 		Materialize.toast(str, duration || 3000, c || '', callback || function(){return false;})
 	},
@@ -127,6 +151,7 @@ app.db.transaction(function(tx) {
 });
 
 app.sqlError =  function(tx,res){
+console.error(tx,res)
 	if(res && res.error){
 		alert(res.error)
 	}
@@ -321,8 +346,10 @@ app.notes = {
 	},
 	init: function(data){
 		Content.innerHTML =''
-		document.title = data.name;
-		Title.innerHTML = data.name;
+		if(data && data.name){
+			document.title = data.name;
+			Title.innerHTML = data.name;
+		}
 		
 	Content.appendChild(this.el.list);
 		Content.appendChild(crEl('div',{c:'fixed-action-btn', s:'bottom: 45px; right: 24px;'},
@@ -488,42 +515,42 @@ app.notes = {
 		
 		
 		
+		function saveANote(id_travel, coords, text){	
+			app.db.transaction(function(tx) {
+				tx.executeSql(" SELECT order_item FROM notes WHERE id_travel=" + id_travel + " ORDER BY order_item DESC", [], function(tx1, result){
+					var max = 0;
+					if(result && result.rows && result.rows.length && result.rows[0] && result.rows[0].order_item){ max = result.rows[0].mm }
+					tx.executeSql("INSERT INTO notes (id_travel, note, order_item, date, lat, lon) values(?,?,?,?,?,?)", [id_travel,text, max, Math.round(new Date().getTime()/1000), coords.latitude, coords.longitude], function(){
+						app.notes.init({id:id_travel})
+					}, app.sqlError);
+					
+				},app.sqlError)
+			}); 
 		
+		}
 		
 		
 		Content.appendChild(crEl('div',{c:'fixed-action-btn', s:'bottom: 45px; right: 24px;'},
 			crEl('a',{ c:'btn-floating btn-large waves-effect waves-light red', href:'javascript:void(0)', e:{click: function(){
 
-						var lat = 0;
-					var lon = 0;
-			app.db.transaction(function(tx) {
-				tx.executeSql(" SELECT order_item FROM notes WHERE id_travel=" + id_travel + " ORDER BY order_item DESC", [],
-				function(tx1, result) {
-					var max = 0;
-					if(result && result.rows[0] && result.rows[0].order_item){
-						max = result.rows[0].mm
+
+					if (navigator.geolocation) {
+						navigator.geolocation.getCurrentPosition(function(position){
+							lat = position.coords.latitude
+							lon = position.coords.longitude
+							
+							saveANote(id_travel, position.coords, editor.innerHTML)
+							
+						});
+					} else {
+						saveANote(id_travel, {latitude:0, longitude:0}, editor.innerHTML)
 					}
 					
-					console.log(result)
 					
-		
 					
-					tx.executeSql("INSERT INTO notes (id_travel, note, order_item, date, lat, lon) values(?,?,?,?,?,?)", [id_travel,editor.innerHTML, max, Math.round(new Date().getTime()/1000), lat, lon], function(){
 					
-						app.notes.init()
-					}, app.sqlError);
 					
-				},app.sqlError)
-				
-					tx.executeSql("INSERT INTO notes (id_travel, note, order_item, date, lat, lon) values(?,?,?,?,?,?)", [id_travel,editor.innerHTML, 0, Math.round(new Date().getTime()/1000), lat, lon], function(){
-					
-						app.notes.init()
-					}, app.sqlError);
-				
-		
-				
-				
-			}); 
+
 			
 			
 			}}}, new MIcon('save',{c:'large'}))
