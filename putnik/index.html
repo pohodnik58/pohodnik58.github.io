@@ -81,11 +81,17 @@
 			// ServiceWorker is a progressive technology. Ignore unsupported browsers
 			if ('serviceWorker' in navigator) {
 			  console.log('CLIENT: service worker registration in progress.');
-			  navigator.serviceWorker.register('/putnik/assets/js/service-worker.js').then(function() {
+			  navigator.serviceWorker.register('/putnik/assets/js/service-worker.js',{ scope: '/putnik/' }).then(function() {
 				console.log('CLIENT: service worker registration complete.');
 				}, function(a,b) {
 				console.log('CLIENT: service worker registration failure.',a,b);
 			  });
+			  
+			  
+			  navigator.serviceWorker.ready.then(function(registration) {
+			   console.log('Service Worker Ready');
+			});
+			  
 			} else {
 			  console.log('CLIENT: service worker is not supported.');
 			}
