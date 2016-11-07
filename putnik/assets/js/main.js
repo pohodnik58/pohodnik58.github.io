@@ -97,11 +97,29 @@ var app = {
 								}
 								console.info();
 								Content.innerHTML = 'Отпавка...';
-								$.post("http://pohodnik58.ru/putnik_export.php",{data:JSON.stringify(Res)},function(d){
-									Content.innerHTML = d;
-								}).fail(function(e) {
-    Content.innerHTML = "Ошибка." + JSON.stringify(e);
-  })
+								
+								
+								$.ajax({
+    url: "http://pohodnik58.ru/putnik_export.php",
+ 
+    // The name of the callback parameter, as specified by the YQL service
+    jsonp: "callback",
+ 
+    // Tell jQuery we're expecting JSONP
+    dataType: "jsonp",
+ 
+    // Tell YQL what we want and that we want JSON
+    data: {data:JSON.stringify(Res)},
+ 
+    // Work with the response
+    success: function( response ) {
+        console.log( response ); // server response
+	    Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
+    }
+});
+								
+								
+
 								
 							},app.sqlError)	
 								
