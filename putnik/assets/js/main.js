@@ -90,9 +90,11 @@ var app = {
 								var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
 								var videoSelect = crEl('select')
 								var res = crEl('div', {s:'margin-top:20px;'})
-								Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
-									canv
-								), videoSelect, res))
+								Content.appendChild(videoSelect);
+								Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},
+									crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
+										canv
+									), res))
 
 								
 
