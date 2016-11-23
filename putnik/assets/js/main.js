@@ -78,6 +78,30 @@ var app = {
 					
 					case 'export':
 					
+					
+					
+						Content.innerHTML = 'Загрузка заметок';
+						
+						$.getScript("assets/js/jsqrcode-combined.min.js",function(){
+							var div = crEl('div',{s:'width:300px; height:250px; margin:0 auto; outline:1px solid red;'})
+							var res = crEl('div', {s:'margin-top:20px;'})
+							Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},div, res))
+							
+							 $(div).html5_qrcode(function(data){
+									 // do something when code is read
+									 res.appendChild(crEl('p', data))
+								},
+								function(error){
+									res.appendChild(crEl('p', error))
+								}, function(videoError){
+									//the video stream could be opened
+									res.appendChild(crEl('p', videoError))
+								}
+							);
+							
+						})
+					
+						break;
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
