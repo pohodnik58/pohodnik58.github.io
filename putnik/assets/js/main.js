@@ -79,6 +79,10 @@ var app = {
 					case 'export':
 					
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
+						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
+						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
+
+						
 						  var config = {
 							apiKey: "AIzaSyAlY9tw41_5PB48V_1darNf8iZrvOU80qc",
 							authDomain: "blogik-298d7.firebaseapp.com",
@@ -101,6 +105,8 @@ var app = {
 							writeUserData(1, "Первое", new Date())
 							writeUserData(2, "Второе", new Date())
 						  
+						})
+						})
 						})
 
 						
