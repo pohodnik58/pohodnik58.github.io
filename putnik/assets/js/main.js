@@ -93,31 +93,6 @@ var app = {
 						  firebase.initializeApp(config);
 						  
 						  
-						  
-						  
-							function writeUserData(travelId, name, date) {
-							  firebase.database().ref('travels/' + travelId).set({
-								name: name,
-								date: date
-							  });
-							}
-						  
-							writeUserData(1, "Первое", new Date())
-							writeUserData(2, "Второе", new Date())
-						  
-						})
-						})
-						})
-
-						
-						
-						
-						break;
-						
-						
-						
-						
-						
 						app.db.transaction(function(tx) {
 						
 						var Res = {}
@@ -140,7 +115,10 @@ var app = {
 								Content.innerHTML = 'Отпавка...';
 								
 								
-								$.ajax({
+							firebase.database().set(Res);
+								
+								
+								/*$.ajax({
 									url: "http://pohodnik58.ru/putnik_export.php",
 								 
 									// The name of the callback parameter, as specified by the YQL service
@@ -158,7 +136,7 @@ var app = {
 										Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
 									}
 								});
-								
+								*/
 								
 
 								
@@ -175,7 +153,18 @@ var app = {
 							
 							
 							
+						})						  
+						  
+
+						  
 						})
+						})
+						})
+
+						
+						
+
+
 					break;
 					
 					
