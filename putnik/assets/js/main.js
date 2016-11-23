@@ -83,7 +83,7 @@ var app = {
 						Content.innerHTML = 'Загрузка заметок';
 						
 						$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
-							$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
+							$.getScript("https://pohodnik58.github.io/putnik/assets/js/WebCodeCam.min.js",function(){
 								var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
 							
 								var res = crEl('div', {s:'margin-top:20px;'})
