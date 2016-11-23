@@ -88,7 +88,7 @@ var app = {
 						$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
 							$.getScript("https://pohodnik58.github.io/putnik/assets/js/WebCodeCam.min.js",function(){
 								var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
-								var videoSelect = crEl('select')
+								var videoSelect = crEl('select',{id:'selCamera'})
 								var res = crEl('div', {s:'margin-top:20px;'})
 								Content.appendChild(videoSelect);
 								Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},
@@ -103,11 +103,8 @@ var app = {
 
 								  for (var i = 0; i !== deviceInfos.length; ++i) {
 									var deviceInfo = deviceInfos[i];
-									var option = document.createElement('option');
-										option.value = deviceInfo.deviceId;
 									if (deviceInfo.kind === 'videoinput') {
-									  option.text = deviceInfo.label || 'camera ' + (videoSelect.length + 1);
-									  videoSelect.appendChild(option);
+									  videoSelect.appendChild(crEl('option',{value:deviceInfo.deviceId},deviceInfo.label || 'camera ' + (videoSelect.length + 1) ));
 									} 
 								  }
 
