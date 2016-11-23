@@ -80,11 +80,11 @@ var app = {
 					
 
 						function go(code){
-											
+							
+							Content.innerHTML = '<div style="padding:20px;">Соединение с сервером</div>';							
 												
 							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
 							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
-							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js",function(){
 							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
 
 							
@@ -96,81 +96,51 @@ var app = {
 								messagingSenderId: "825064036383"
 							  };
 							  firebase.initializeApp(config);
-							  
-							  
-							  
-							  firebase.auth().signInWithCustomToken(code).then(function(e){
-								alert("Success" + e)
-							  }).catch(function(error) {
-									alert("Auth error " + error.code + "\n" + error.message)
-								});
-													  
-							  
-							  return false;
-							  
-							  
-							  
-							app.db.transaction(function(tx) {
-							
-							var Res = {}
-							Content.innerHTML = 'Загрузка заметок';
-								tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
-								function(tx, result) {
-									Res.notes = []; 
-									for(var i=0; i<result.rows.length; i++){
-										Res.notes.push(result.rows[i])
-									}
-									
-									Content.innerHTML = 'Загрузка путешествий';
-								tx.executeSql(" SELECT id, name, description, date FROM travel", [],
-								function(tx, result) {
-									Res.travels = []; 
-									for(var i=0; i<result.rows.length; i++){
-										Res.travels.push(result.rows[i])
-									}
-									console.info();
-									Content.innerHTML = 'Отпавка...';
-									
-									
-								firebase.database().ref('db').set(Res);
-									console.log(Res)
-									
-									/*$.ajax({
-										url: "http://pohodnik58.ru/putnik_export.php",
-									 
-										// The name of the callback parameter, as specified by the YQL service
-										jsonp: "callback",
-									 
-										// Tell jQuery we're expecting JSONP
-										dataType: "jsonp",
-									 
-										// Tell YQL what we want and that we want JSON
-										data: {data:JSON.stringify(Res)},
-									 
-										// Work with the response
-										success: function( response ) {
-											console.log( response ); // server response
-											Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
-										}
-									});
-									*/
-									
 
+							  
+									app.db.transaction(function(tx) {
 									
-								},app.sqlError)	
-									
-									
-									
-									
-									
-								},app.sqlError)	
+									var Res = {}
+									Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
+										tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
+										function(tx, result) {
+											Res.notes = []; 
+											for(var i=0; i<result.rows.length; i++){
+												Res.notes.push(result.rows[i])
+											}
+											
+											Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
+										tx.executeSql(" SELECT id, name, description, date FROM travel", [],
+										function(tx, result) {
+											Res.travels = []; 
+											for(var i=0; i<result.rows.length; i++){
+												Res.travels.push(result.rows[i])
+											}
+											console.info();
+											Content.innerHTML = '<div style="padding:20px;">Загрузка...</div>';
+											
+											
+											firebase.database().ref(code).set(Res).then(function(){
+												Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
+											});
+
+											
+
+											
+										},app.sqlError)	
+											
+											
+											
+											
+											
+										},app.sqlError)	
 
 
-								
-								
-								
-								
-							})						  
+										
+										
+										
+										
+									})						  
 							  
 
 							  
