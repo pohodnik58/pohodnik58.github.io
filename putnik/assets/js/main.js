@@ -82,23 +82,49 @@ var app = {
 					
 						Content.innerHTML = 'Загрузка заметок';
 						
-						$.getScript("https://pohodnik58.github.io/putnik/assets/js/html5-qrcode.min.js",function(){
-							var div = crEl('div',{s:'width:300px; height:250px; margin:0 auto; outline:1px solid red;'})
-							var res = crEl('div', {s:'margin-top:20px;'})
-							Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},div, res))
+						$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
+							$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
+								var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
 							
-							 $(div).html5_qrcode(function(data){
-									 // do something when code is read
-									 res.appendChild(crEl('p', data))
-								},
-								function(error){
-									res.appendChild(crEl('p', error))
-								}, function(videoError){
-									//the video stream could be opened
-									res.appendChild(crEl('p', videoError))
-								}
-							);
-							
+								var res = crEl('div', {s:'margin-top:20px;'})
+								Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},crEl('div',{s:'width:300px; height:300px; margin:0 auto; position:relative'},
+									canv
+								), res))
+
+								
+								$('#qr-canvas').WebCodeCam({
+									ReadQRCode: true, // false or true
+									ReadBarecode: true, // false or true
+									width: 300,
+									height: 300,
+									videoSource: {  
+											id: true,      //default Videosource
+											maxWidth: 300, //max Videosource resolution width
+											maxHeight: 300 //max Videosource resolution height
+									},
+									flipVertical: false,  // false or true
+									flipHorizontal: false,  // false or true
+									zoom: -1, // if zoom = -1, auto zoom for optimal resolution else int
+									beep: "https://pohodnik58.github.io/putnik/assets/js/beep.mp3", // string, audio file location
+									autoBrightnessValue: false, // functional when value autoBrightnessValue is int
+									brightness: 0, // int 
+									grayScale: false, // false or true
+									contrast: 0, // int 
+									threshold: 0, // int 
+									sharpness: [], //or matrix, example for sharpness ->  [0, -1, 0, -1, 5, -1, 0, -1, 0]
+									resultFunction: function(resText, lastImageSrc) {
+												res.appendChild(crEl('p', resText))
+									},
+									getUserMediaError: function(error) {
+										res.appendChild(crEl('p', error))
+									},
+									cameraError: function(error) {
+											res.appendChild(crEl('p', error))
+									}
+								});
+								
+	
+							})
 						})
 					
 						break;
