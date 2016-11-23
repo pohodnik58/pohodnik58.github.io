@@ -83,8 +83,8 @@ var app = {
 											
 												
 							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
-							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js",function(){
 							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js",function(){
 							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
 
 							
