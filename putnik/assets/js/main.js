@@ -111,7 +111,7 @@ var app = {
 
 								}
 
-								navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);	
+								navigator.mediaDevices.enumerateDevices().then(gotDevices)
 
 
 
