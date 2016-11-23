@@ -115,8 +115,8 @@ var app = {
 								Content.innerHTML = 'Отпавка...';
 								
 								
-							firebase.database().set(Res);
-								
+							firebase.database().ref('db').set(Res);
+								console.log(Res)
 								
 								/*$.ajax({
 									url: "http://pohodnik58.ru/putnik_export.php",
