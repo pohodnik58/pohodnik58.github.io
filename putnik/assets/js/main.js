@@ -79,7 +79,109 @@ var app = {
 					case 'export':
 					
 
+						function go(code){
+											
+												
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js",function(){
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
 
+							
+							  var config = {
+								apiKey: "AIzaSyAlY9tw41_5PB48V_1darNf8iZrvOU80qc",
+								authDomain: "blogik-298d7.firebaseapp.com",
+								databaseURL: "https://blogik-298d7.firebaseio.com",
+								storageBucket: "blogik-298d7.appspot.com",
+								messagingSenderId: "825064036383"
+							  };
+							  firebase.initializeApp(config);
+							  
+							  
+							  
+							  firebase.auth().signInWithCustomToken(code).then(function(e){
+								alert("Success" + e)
+							  }).catch(function(error) {
+									alert("Auth error " + error.code + "\n" + error.message)
+								});
+													  
+							  
+							  return false;
+							  
+							  
+							  
+							app.db.transaction(function(tx) {
+							
+							var Res = {}
+							Content.innerHTML = 'Загрузка заметок';
+								tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
+								function(tx, result) {
+									Res.notes = []; 
+									for(var i=0; i<result.rows.length; i++){
+										Res.notes.push(result.rows[i])
+									}
+									
+									Content.innerHTML = 'Загрузка путешествий';
+								tx.executeSql(" SELECT id, name, description, date FROM travel", [],
+								function(tx, result) {
+									Res.travels = []; 
+									for(var i=0; i<result.rows.length; i++){
+										Res.travels.push(result.rows[i])
+									}
+									console.info();
+									Content.innerHTML = 'Отпавка...';
+									
+									
+								firebase.database().ref('db').set(Res);
+									console.log(Res)
+									
+									/*$.ajax({
+										url: "http://pohodnik58.ru/putnik_export.php",
+									 
+										// The name of the callback parameter, as specified by the YQL service
+										jsonp: "callback",
+									 
+										// Tell jQuery we're expecting JSONP
+										dataType: "jsonp",
+									 
+										// Tell YQL what we want and that we want JSON
+										data: {data:JSON.stringify(Res)},
+									 
+										// Work with the response
+										success: function( response ) {
+											console.log( response ); // server response
+											Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
+										}
+									});
+									*/
+									
+
+									
+								},app.sqlError)	
+									
+									
+									
+									
+									
+								},app.sqlError)	
+
+
+								
+								
+								
+								
+							})						  
+							  
+
+							  
+							})
+							})
+							})})
+	
+											
+											
+									
+						}
 
 					
 					
@@ -121,6 +223,10 @@ var app = {
 										canv
 									)));
 									
+									qr.appendChild(crEl('a',{href:'javascript:void(0)', e:{click: function(){
+										go(prompt('code'))
+									}}}, 'alt'))
+									
 									$(canv).WebCodeCam({
 										ReadQRCode: true, // false or true
 										ReadBarecode: true, // false or true
@@ -144,109 +250,7 @@ var app = {
 										resultFunction: function(resText, lastImageSrc) {
 											
 											
-											Content.innerHTML = 'Код доступа ' + resText;
-											
-											
-											
-						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
-						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js",function(){
-						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
-						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
-
-						
-						  var config = {
-							apiKey: "AIzaSyAlY9tw41_5PB48V_1darNf8iZrvOU80qc",
-							authDomain: "blogik-298d7.firebaseapp.com",
-							databaseURL: "https://blogik-298d7.firebaseio.com",
-							storageBucket: "blogik-298d7.appspot.com",
-							messagingSenderId: "825064036383"
-						  };
-						  firebase.initializeApp(config);
-						  
-						  
-						  
-						  firebase.auth().signInWithCustomToken(resText).then(function(e){
-							alert("Success" + e)
-						  }).catch(function(error) {
-								alert("Auth error " + error.code + "\n" + error.message)
-							});
-												  
-						  
-						  return false;
-						  
-						  
-						  
-						app.db.transaction(function(tx) {
-						
-						var Res = {}
-						Content.innerHTML = 'Загрузка заметок';
-							tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
-							function(tx, result) {
-								Res.notes = []; 
-								for(var i=0; i<result.rows.length; i++){
-									Res.notes.push(result.rows[i])
-								}
-								
-								Content.innerHTML = 'Загрузка путешествий';
-							tx.executeSql(" SELECT id, name, description, date FROM travel", [],
-							function(tx, result) {
-								Res.travels = []; 
-								for(var i=0; i<result.rows.length; i++){
-									Res.travels.push(result.rows[i])
-								}
-								console.info();
-								Content.innerHTML = 'Отпавка...';
-								
-								
-							firebase.database().ref('db').set(Res);
-								console.log(Res)
-								
-								/*$.ajax({
-									url: "http://pohodnik58.ru/putnik_export.php",
-								 
-									// The name of the callback parameter, as specified by the YQL service
-									jsonp: "callback",
-								 
-									// Tell jQuery we're expecting JSONP
-									dataType: "jsonp",
-								 
-									// Tell YQL what we want and that we want JSON
-									data: {data:JSON.stringify(Res)},
-								 
-									// Work with the response
-									success: function( response ) {
-										console.log( response ); // server response
-										Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
-									}
-								});
-								*/
-								
-
-								
-							},app.sqlError)	
-								
-								
-								
-								
-								
-							},app.sqlError)	
-
-
-							
-							
-							
-							
-						})						  
-						  
-
-						  
-						})
-						})
-						})})
-	
-											
-											
-											
+											go(resText)		
 											
 											
 											
