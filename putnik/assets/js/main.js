@@ -77,6 +77,41 @@ var app = {
 					
 					
 					case 'export':
+					
+						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
+						  var config = {
+							apiKey: "AIzaSyAlY9tw41_5PB48V_1darNf8iZrvOU80qc",
+							authDomain: "blogik-298d7.firebaseapp.com",
+							databaseURL: "https://blogik-298d7.firebaseio.com",
+							storageBucket: "blogik-298d7.appspot.com",
+							messagingSenderId: "825064036383"
+						  };
+						  firebase.initializeApp(config);
+						  
+						  
+						  
+						  
+							function writeUserData(travelId, name, date) {
+							  firebase.database().ref('travels/' + travelId).set({
+								name: name,
+								date: date
+							  });
+							}
+						  
+							writeUserData(1, "Первое", new Date())
+							writeUserData(2, "Второе", new Date())
+						  
+						})
+
+						
+						
+						
+						break;
+						
+						
+						
+						
+						
 						app.db.transaction(function(tx) {
 						
 						var Res = {}
@@ -100,23 +135,23 @@ var app = {
 								
 								
 								$.ajax({
-    url: "http://pohodnik58.ru/putnik_export.php",
- 
-    // The name of the callback parameter, as specified by the YQL service
-    jsonp: "callback",
- 
-    // Tell jQuery we're expecting JSONP
-    dataType: "jsonp",
- 
-    // Tell YQL what we want and that we want JSON
-    data: {data:JSON.stringify(Res)},
- 
-    // Work with the response
-    success: function( response ) {
-        console.log( response ); // server response
-	    Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
-    }
-});
+									url: "http://pohodnik58.ru/putnik_export.php",
+								 
+									// The name of the callback parameter, as specified by the YQL service
+									jsonp: "callback",
+								 
+									// Tell jQuery we're expecting JSONP
+									dataType: "jsonp",
+								 
+									// Tell YQL what we want and that we want JSON
+									data: {data:JSON.stringify(Res)},
+								 
+									// Work with the response
+									success: function( response ) {
+										console.log( response ); // server response
+										Content.innerHTML = "Ошибка." +response+ JSON.stringify(response);
+									}
+								});
 								
 								
 
