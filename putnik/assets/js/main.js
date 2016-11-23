@@ -193,7 +193,9 @@ var app = {
 								var videoSelect = crEl('select',{id:'selCamera'})
 
 								Content.appendChild(crEl('div', {c:'row'}, crEl('div', {c:'input-field col s12'}, videoSelect, crEl('label','Выбрать камеру'))));
-								Content.appendChild(crEl('div', {id:'qr'}))
+								Content.appendChild(crEl('div', {id:'qr'}, crEl('a',{href:'javascript:void(0)', e:{click: function(){
+										go(prompt('code'))
+									}}}, 'alt')))
 
 								function gotDevices(deviceInfos) {
 
@@ -223,9 +225,7 @@ var app = {
 										canv
 									)));
 									
-									qr.appendChild(crEl('a',{href:'javascript:void(0)', e:{click: function(){
-										go(prompt('code'))
-									}}}, 'alt'))
+									
 									
 									$(canv).WebCodeCam({
 										ReadQRCode: true, // false or true
