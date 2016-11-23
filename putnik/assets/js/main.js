@@ -93,9 +93,6 @@ var app = {
 								Content.appendChild(crEl('div', {c:'row'}, crEl('div', {c:'input-field col s12'}, videoSelect, crEl('label','Выбрать камеру'))));
 								Content.appendChild(crEl('div', {id:'qr'}))
 
-								
-				
-
 								function gotDevices(deviceInfos) {
 
 								  for (var i = 0; i !== deviceInfos.length; ++i) {
@@ -117,7 +114,7 @@ var app = {
 									var qr = document.getElementById("qr");
 									var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
 									
-									qr.innerHTML = ""
+									qr.innerHTML = "<br>"
 									
 									qr.appendChild(	crEl('div',{s:'padding:20px; texta-lign:center;'},
 									crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
@@ -145,26 +142,14 @@ var app = {
 										threshold: 0, // int 
 										sharpness: [], //or matrix, example for sharpness ->  [0, -1, 0, -1, 5, -1, 0, -1, 0]
 										resultFunction: function(resText, lastImageSrc) {
-											alert(resText)
-										},
-										getUserMediaError: function(error) {
-											alert(error)
-										},
-										cameraError: function(error) {
-											alert(error)
-										}
-									});
-								}
-								
-								
-								
-								
-	
-							})
-						})
-					
-						break;
+											
+											
+											Content.innerHTML = 'Код доступа ' + resText;
+											
+											
+											
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
+						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js",function(){
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
 						$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
 
@@ -177,6 +162,18 @@ var app = {
 							messagingSenderId: "825064036383"
 						  };
 						  firebase.initializeApp(config);
+						  
+						  
+						  
+						  firebase.auth().signInWithCustomToken(resText).then(function(e){
+							alert("Success" + e)
+						  }).catch(function(error) {
+								alert("Auth error " + error.code + "\n" + error.message)
+							});
+												  
+						  
+						  return false;
+						  
 						  
 						  
 						app.db.transaction(function(tx) {
@@ -246,7 +243,35 @@ var app = {
 						})
 						})
 						})
-
+	
+											
+											
+											
+											
+											
+											
+											
+											
+											
+										},
+										getUserMediaError: function(error) {
+											alert(error)
+										},
+										cameraError: function(error) {
+											alert(error)
+										}
+									});
+								}
+								
+								
+								
+								
+	
+							})
+						})
+					
+						break;
+						
 						
 						
 
