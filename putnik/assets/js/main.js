@@ -87,17 +87,14 @@ var app = {
 						
 						$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
 							$.getScript("https://pohodnik58.github.io/putnik/assets/js/WebCodeCam.min.js",function(){
-								var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
-								var videoSelect = crEl('select',{id:'selCamera', c:'input-field'})
-								var res = crEl('div', {s:'margin-top:20px;'})
-								Content.appendChild(videoSelect);
-								Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},
-									crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
-										canv
-									), res))
+								
+								var videoSelect = crEl('select',{id:'selCamera'})
+
+								Content.appendChild(crEl('div', {c:'row'}, crEl('div', {c:'input-field col s12'}, videoSelect, crEl('label','Выбрать камеру'))));
+								Content.appendChild(crEl('div', {id:'qr'}))
 
 								
-								var coCam = 0;
+				
 
 								function gotDevices(deviceInfos) {
 
@@ -105,7 +102,7 @@ var app = {
 									var deviceInfo = deviceInfos[i];
 									if (deviceInfo.kind === 'videoinput') {
 									  videoSelect.appendChild(crEl('option',{value:deviceInfo.deviceId},deviceInfo.label || 'camera ' + (videoSelect.length + 1) ));
-										coCam++;
+										
 									} 
 								  }
 								  
@@ -115,23 +112,22 @@ var app = {
 
 								navigator.mediaDevices.enumerateDevices().then(gotDevices)
 
-
-								
-								
-
-								
-								
-								if(coCam===1){
-								
-								
-								
-									$('#qr-canvas').WebCodeCam({
+								videoSelect.onchange = function(){
+									var th = this;
+									var qr = document.getElementById("qr");
+									var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
+										qr.innerHTML = crEl('div',{s:'padding:20px; texta-lign:center;'},
+									crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
+										canv
+									));
+									
+									$(canv).WebCodeCam({
 										ReadQRCode: true, // false or true
 										ReadBarecode: true, // false or true
 										width: 300,
 										height: 300,
 										videoSource: {  
-												id: true,      //default Videosource
+												id: th.value,      //default Videosource
 												maxWidth: 300, //max Videosource resolution width
 												maxHeight: 300 //max Videosource resolution height
 										},
@@ -155,45 +151,10 @@ var app = {
 												res.appendChild(crEl('p', error))
 										}
 									});
-								
-								} else {
-								
-									videoSelect.onchange = function(){
-										var th = this;
-										$('#qr-canvas').WebCodeCam({
-											ReadQRCode: true, // false or true
-											ReadBarecode: true, // false or true
-											width: 300,
-											height: 300,
-											videoSource: {  
-													id: th.value,      //default Videosource
-													maxWidth: 300, //max Videosource resolution width
-													maxHeight: 300 //max Videosource resolution height
-											},
-											flipVertical: false,  // false or true
-											flipHorizontal: false,  // false or true
-											zoom: -1, // if zoom = -1, auto zoom for optimal resolution else int
-											beep: "https://pohodnik58.github.io/putnik/assets/js/beep.mp3", // string, audio file location
-											autoBrightnessValue: false, // functional when value autoBrightnessValue is int
-											brightness: 0, // int 
-											grayScale: false, // false or true
-											contrast: 0, // int 
-											threshold: 0, // int 
-											sharpness: [], //or matrix, example for sharpness ->  [0, -1, 0, -1, 5, -1, 0, -1, 0]
-											resultFunction: function(resText, lastImageSrc) {
-														res.appendChild(crEl('p', resText))
-											},
-											getUserMediaError: function(error) {
-												res.appendChild(crEl('p', error))
-											},
-											cameraError: function(error) {
-													res.appendChild(crEl('p', error))
-											}
-										});
-									}
-								
-								
 								}
+								
+								
+								
 								
 	
 							})
