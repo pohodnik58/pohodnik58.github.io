@@ -142,13 +142,13 @@ var app = {
 										threshold: 0, // int 
 										sharpness: [], //or matrix, example for sharpness ->  [0, -1, 0, -1, 5, -1, 0, -1, 0]
 										resultFunction: function(resText, lastImageSrc) {
-													res.appendChild(crEl('p', resText))
+											alert(resText)
 										},
 										getUserMediaError: function(error) {
-											res.appendChild(crEl('p', error))
+											alert(error)
 										},
 										cameraError: function(error) {
-												res.appendChild(crEl('p', error))
+											alert(error)
 										}
 									});
 								}
