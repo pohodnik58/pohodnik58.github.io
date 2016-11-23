@@ -82,7 +82,7 @@ var app = {
 					
 						Content.innerHTML = 'Загрузка заметок';
 						
-						$.getScript("assets/js/html5-qrcode.min.js",function(){
+						$.getScript("https://pohodnik58.github.io/putnik/assets/js/html5-qrcode.min.js",function(){
 							var div = crEl('div',{s:'width:300px; height:250px; margin:0 auto; outline:1px solid red;'})
 							var res = crEl('div', {s:'margin-top:20px;'})
 							Content.appendChild(crEl('div',{s:'padding:20px; texta-lign:center;'},div, res))
