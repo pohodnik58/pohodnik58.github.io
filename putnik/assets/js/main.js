@@ -87,7 +87,7 @@ var app = {
 						
 						$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
 							$.getScript("https://pohodnik58.github.io/putnik/assets/js/WebCodeCam.min.js",function(){
-								
+								Content.innerHTML = '';
 								var videoSelect = crEl('select',{id:'selCamera'})
 
 								Content.appendChild(crEl('div', {c:'row'}, crEl('div', {c:'input-field col s12'}, videoSelect, crEl('label','Выбрать камеру'))));
@@ -116,10 +116,13 @@ var app = {
 									var th = this;
 									var qr = document.getElementById("qr");
 									var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
-										qr.innerHTML = crEl('div',{s:'padding:20px; texta-lign:center;'},
+									
+									qr.innerHTML = ""
+									
+									qr.appendChild(	crEl('div',{s:'padding:20px; texta-lign:center;'},
 									crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
 										canv
-									));
+									)));
 									
 									$(canv).WebCodeCam({
 										ReadQRCode: true, // false or true
