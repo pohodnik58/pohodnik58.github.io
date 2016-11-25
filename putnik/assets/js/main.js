@@ -101,73 +101,48 @@ var app = {
 									app.db.transaction(function(tx) {
 									
 									var Res = {}
-									Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
+									
+									function upload(way, data, callback){
+										firebase.database().ref(way).set(data).then(callback);
+									}
+									function _iter(index, array, way, cb, iterCb){
+										if(!array[index]){cb(); return;}
+										
+										upload(way,array[index], function(){
+											Content.innerHTML += '<div style="padding:20px;">Загружено ' + (index+1) + ' из ' + array.length + '</div>'
+											if(array[index+1]){_iter(index+1, array, way, cb); } else {
+												cb();
+											}												
+										})
+
+									}									
+										Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
 										tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
 										function(tx, result) {
-											Res.notes = []; 
-											for(var i=0; i<result.rows.length; i++){
-												Res.notes.push(result.rows[i])
-											}
-											
-											Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
-										tx.executeSql(" SELECT id, name, description, date FROM travel", [],
-										function(tx, result) {
-											Res.travels = []; 
-											for(var i=0; i<result.rows.length; i++){
-												Res.travels.push(result.rows[i])
-											}
-											console.info();
-											Content.innerHTML = '<div style="padding:20px;">Загрузка...</div>';
-											
 									
-																				
-										var xhr = new XMLHttpRequest();
-										var bUploadProgress = document.getElementById('bUploadProgress')
-										xhr.upload.addEventListener('progress', function (e) {
-										     Content.innerHTML = '<div style="padding:20px;">Загрузка на сервер ' +
-												Math.round(100*(e.loaded / e.total)) + '\u00a0%'
-											+ '</div>';
-											
-										}, false);
+												_iter(0, result.rows, code+'/notes', function(){
+													Content.innerHTML = '<div style="padding:20px;">Все заметки успешно загружены</div>';
+													setTimeout( function(){
+														Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
+														tx.executeSql(" SELECT id, name, description, date FROM travel", [],
+														function(tx, result) {
+															
+															_iter(0, result.rows, code+'/travels', function(){
+																Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
+															})
+															
 
-										xhr.onreadystatechange = function () {
-											if (this.readyState == 4) {
-												if(this.status == 200) {
-
-													 Content.innerHTML = this.responseText;
-
-												} else {
-												    Content.innerHTML = ('Ошибка загузки...')
+															
+														},app.sqlError)														
+													
+													
+													
+													
+													},600)
 												}
-											}
-										};
-
-										xhr.upload.addEventListener('load', function(e) {
-											 Content.innerHTML = '<div style="padding:20px;">Загружено!</div>';
-										});
-
-										xhr.upload.addEventListener( 'error', function(e) {
-											Content.innerHTML = '<div style="padding:20px;">ОШИБКА! '+e+'</div>';
-										});										
-										
-										xhr.open('POST', 'http://org.pohodnik58.ru/ajax/blog/import.php?code='+code, true);
-
-										var data = new FormData();
-										data.append('file', new Blob([JSON.stringify(Res)],{type:'application/json'}));
-										//data.append('code', code);
-										xhr.send(data);	
 											
-										/*	
-											firebase.database().ref(code).set(Res).then(function(){
-												Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
-											});
-											
-										*/
-
 											
 
-											
-										},app.sqlError)	
 											
 											
 											
