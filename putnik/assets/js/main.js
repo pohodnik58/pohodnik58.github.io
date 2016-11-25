@@ -119,10 +119,50 @@ var app = {
 											console.info();
 											Content.innerHTML = '<div style="padding:20px;">Загрузка...</div>';
 											
+									
+																				
+										var xhr = new XMLHttpRequest();
+										var bUploadProgress = document.getElementById('bUploadProgress')
+										xhr.upload.addEventListener('progress', function (e) {
+										     Content.innerHTML = '<div style="padding:20px;">Загрузка на сервер ' +
+												Math.round(100*(e.loaded / e.total)) + '\u00a0%'
+											+ '</div>';
 											
+										}, false);
+
+										xhr.onreadystatechange = function () {
+											if (this.readyState == 4) {
+												if(this.status == 200) {
+
+													 Content.innerHTML = this.responseText;
+
+												} else {
+												    Content.innerHTML = ('Ошибка загузки...')
+												}
+											}
+										};
+
+										xhr.upload.addEventListener('load', function(e) {
+											 Content.innerHTML = '<div style="padding:20px;">Загружено!</div>';
+										});
+
+										xhr.upload.addEventListener( 'error', function(e) {
+											Content.innerHTML = '<div style="padding:20px;">ОШИБКА! '+e+'</div>';
+										});										
+										
+										xhr.open('POST', 'http://org.pohodnik58.ru/ajax/blog/import.php', true);
+
+										var data = new FormData();
+										data.append('file', new Blob([JSON.stringify(da)],{type:'application/json'}));
+										data.append('code', code);
+										xhr.send(data);	
+											
+										/*	
 											firebase.database().ref(code).set(Res).then(function(){
 												Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
 											});
+											
+										*/
 
 											
 
