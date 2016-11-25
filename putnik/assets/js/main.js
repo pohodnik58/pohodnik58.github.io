@@ -106,7 +106,7 @@ var app = {
 										firebase.database().ref(way).set(data).then(callback);
 									}
 									function _iter(index, array, way, cb, iterCb){
-										if(!array[index]){cb(); return;}
+										if(index===array.length || !array[index]){cb(); return;}
 										
 										upload(way,array[index], function(){
 											Content.innerHTML += '<div style="padding:20px;">Загружено ' + (index+1) + ' из ' + array.length + '</div>'
