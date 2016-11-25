@@ -101,59 +101,51 @@ var app = {
 									app.db.transaction(function(tx) {
 									
 									var Res = {}
-									
-									function upload(way, data, callback){
-										firebase.database().ref(way).set(data).then(callback);
-									}
-									function _iter(index, array, way, cb, iterCb){
-										if(index===array.length || !array[index]){cb(); return;}
 										
-										upload(way,array[index], function(){
-											Content.innerHTML += '<div style="padding:20px;">Загружено ' + (index+1) + ' из ' + array.length + '</div>'
-											if(index+1<array.length){_iter(index+1, array, way, cb); } else {
-												cb();
-											}												
-										})
+										function upload(way, data, callback){
+											firebase.database().ref(way).set(data).then(callback);
+										}
+										function _iter(index, array, way, cb, iterCb){
+											if(index===array.length || !array[index]){cb(); return;}
+											
+											upload(way,array[index], function(){
+												Content.innerHTML += '<div style="padding:20px;">Загружено ' + (index+1) + ' из ' + array.length + '</div>'
+												if(index+1<array.length){_iter(index+1, array, way, cb); } else {
+													cb();
+												}												
+											})
 
-									}									
-										Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
-										tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
-										function(tx, result) {
-									
+										}									
+										
+										function _loadNotes(cb){
+											Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
+											tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
+											function(tx, result) {
 												_iter(0, result.rows, code+'/notes', function(){
 													Content.innerHTML = '<div style="padding:20px;">Все заметки успешно загружены</div>';
-													setTimeout( function(){
-														Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
-														tx.executeSql(" SELECT id, name, description, date FROM travel", [],
-														function(tx, result) {
-															
-															_iter(0, result.rows, code+'/travels', function(){
-																Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
-															})
-															
-
-															
-														},app.sqlError)														
-													
-													
-													
-													
-													},600)
+													setTimeout(cb, 500);
 												})
-											
-											
-
-											
-											
-											
-											
-											
-										},app.sqlError)	
-
-
+											},app.sqlError)
+										}
 										
+										function _loadTravels(){
+
+											Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
+											tx.executeSql(" SELECT id, name, description, date FROM travel", [],
+											function(tx, result) {
+												_iter(0, result.rows, code+'/travels', function(){
+
+													setTimeout(cb, 500);
+												})
+											},app.sqlError)											
 										
+										}
 										
+										_loadTravels(function(){
+											_loadNotes(function(){
+												Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
+											})
+										})
 										
 									})						  
 							  
