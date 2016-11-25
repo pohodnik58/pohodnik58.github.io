@@ -986,12 +986,13 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 
 							gifshot.createGIF({webcamVideoElement:document.getElementById('addPhotoVideo')},function(obj) {
 								if(!obj.error) {
-									gifshot.stopVideoStreaming();
+									gifshot.stopVideoStreaming
+									gStream1.getTracks().forEach(track => track.stop());
 									var image = obj.image,
 									animatedImage = document.createElement('img');
 									animatedImage.src = image;
 									  callback(animatedImage)			
-									  gStream1.getTracks().forEach(track => track.stop());
+									  
 									  $("#modal").remove();
 								}
 							});
