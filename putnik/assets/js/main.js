@@ -984,8 +984,9 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
 						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
 
-							gifshot.createGIF(function(obj) {
+							gifshot.createGIF({webcamVideoElement:document.getElementById('addPhotoVideo')},function(obj) {
 								if(!obj.error) {
+									gifshot.stopVideoStreaming();
 									var image = obj.image,
 									animatedImage = document.createElement('img');
 									animatedImage.src = image;
