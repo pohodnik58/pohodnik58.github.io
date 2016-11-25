@@ -1,5 +1,5 @@
-var dataCacheName = 'putnik-v1.1.2';
-var cacheName = 'putnik-1.1.2';
+var dataCacheName = 'putnik-v1.1.3';
+var cacheName = 'putnik-1.1.3';
 var filesToCache = [
 	'index.html',
 	'assets/fonts/material-design-icons/material-icons.css',
