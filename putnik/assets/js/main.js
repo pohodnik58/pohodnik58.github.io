@@ -912,7 +912,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				
 			},
 			"insertPhoto":function(callback, txt, nodes){
-				var canvas = document.getElementById('canvas');
+				var canvas = crEl('canvas');
 				var context = canvas.getContext('2d');
 				var videoStreamUrl = false;
 			
