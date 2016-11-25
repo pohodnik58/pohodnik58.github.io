@@ -98,7 +98,7 @@ var app = {
 							  firebase.initializeApp(config);
 
 							  
-									app.db.transaction(function(tx) {
+									
 									
 									var Res = {}
 										
@@ -118,18 +118,20 @@ var app = {
 										}									
 										
 										function _loadNotes(cb){
-											Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
-											tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
-											function(tx, result) {
-												_iter(0, result.rows, code+'/notes', function(){
-													Content.innerHTML = '<div style="padding:20px;">Все заметки успешно загружены</div>';
-													setTimeout(cb, 500);
-												})
-											},app.sqlError)
+											app.db.transaction(function(tx) {
+												Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
+												tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
+												function(tx, result) {
+													_iter(0, result.rows, code+'/notes', function(){
+														Content.innerHTML = '<div style="padding:20px;">Все заметки успешно загружены</div>';
+														setTimeout(cb, 500);
+													})
+												},app.sqlError)
+											})
 										}
 										
 										function _loadTravels(cb){
-
+											app.db.transaction(function(tx) {
 											Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
 											tx.executeSql(" SELECT id, name, description, date FROM travel", [],
 											function(tx, result) {
@@ -137,7 +139,8 @@ var app = {
 
 													setTimeout(cb, 500);
 												})
-											},app.sqlError)											
+											},app.sqlError)	
+											})
 										
 										}
 										
@@ -147,7 +150,7 @@ var app = {
 											})
 										})
 										
-									})						  
+															  
 							  
 
 							  
