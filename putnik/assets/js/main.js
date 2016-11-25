@@ -777,8 +777,8 @@ setTimeout(function(){
 		}
 		
 	
-			
-		navRight.appendChild(crEl('li', crEl('a',{href:'javascript:void(0)',c:'waves-effect',e:{click: function(){
+	
+			navRight.appendChild(crEl('li', crEl('a',{href:'javascript:void(0)',c:'waves-effect',e:{click: function(){
 
 					if (navigator.geolocation) {
 						navigator.geolocation.getCurrentPosition(function(position){
@@ -790,7 +790,21 @@ setTimeout(function(){
 						saveANote(id_travel, {latitude:0, longitude:0}, editor.innerHTML)
 					}
 					Footer.style.display = 'none';
+			}}}, new MIcon('room')) ))
+	
+	
+	
+	
+	
+		navRight.appendChild(crEl('li', crEl('a',{href:'javascript:void(0)',c:'waves-effect',e:{click: function(){
+
+		
+						saveANote(id_travel, {latitude:0, longitude:0}, editor.innerHTML)
+				
+					Footer.style.display = 'none';
 			}}}, new MIcon('save')) ))
+			
+
 
 
 		editor.focus()
