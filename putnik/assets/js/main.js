@@ -128,7 +128,7 @@ var app = {
 											},app.sqlError)
 										}
 										
-										function _loadTravels(){
+										function _loadTravels(cb){
 
 											Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
 											tx.executeSql(" SELECT id, name, description, date FROM travel", [],
