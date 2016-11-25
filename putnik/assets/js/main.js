@@ -103,7 +103,7 @@ var app = {
 									var Res = {}
 										
 										function upload(way, data, callback){
-											firebase.database().ref(way).set(data).then(callback);
+											firebase.database().ref(way+'/'+data.id).set(data).then(callback);
 										}
 										function _iter(index, array, way, cb, iterCb){
 											if(index===array.length || !array[index]){cb(); return;}
