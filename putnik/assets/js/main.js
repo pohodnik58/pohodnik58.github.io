@@ -915,7 +915,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				var w = 800, h = 600;
 				var canvas = crEl('canvas', {width:w+'px', height:h+'px'});
 				var context = canvas.getContext('2d');
-				var videoStreamUrl = false;
+				window.videoStreamUrl = false;
 			
 					app.full(crEl('div',
 						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
