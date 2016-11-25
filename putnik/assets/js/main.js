@@ -916,7 +916,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				var canvas = crEl('canvas', {width:w+'px', height:h+'px'});
 				var context = canvas.getContext('2d');
 				window.videoStreamUrl = false;
-			
+				window.gStream = null;
 					app.full(crEl('div',
 						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
 						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
@@ -936,7 +936,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 						  var img = new Image();
 						  img.src = base64dataUrl;
 						  callback(img)			
-						  videoStreamUrl.getTracks().forEach(track => track.stop());
+						  gStream.getTracks().forEach(track => track.stop());
 						
 							$("#modal").remove();
 						}}},'img')
@@ -947,6 +947,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 
 						navigator.getUserMedia({video: true}, function (stream) {
 						  videoStreamUrl = window.URL.createObjectURL(stream);
+						  gStream = stream
 						  document.getElementById('addPhotoVideo').src = videoStreamUrl;
 						}, function () {
 						  console.log('что-то не так с видеостримом или пользователь запретил его использовать :P');
