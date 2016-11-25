@@ -935,8 +935,8 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 						  // но мы добавим эти тестовые снимки в наш пример:
 						  var img = new Image();
 						  img.src = base64dataUrl;
-						  callback(img)						
-						if(videoStreamUrl.getVideoTracks) {videoStreamUrl.getVideoTracks()[0].stop()}
+						  callback(img)			
+						  videoStreamUrl.getTracks().forEach(track => track.stop());
 						
 							$("#modal").remove();
 						}}},'img')
