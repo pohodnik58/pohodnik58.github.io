@@ -77,46 +77,219 @@ var app = {
 					
 					
 					case 'export':
-						app.db.transaction(function(tx) {
-						
-						var Res = {}
+					
+
+						function go(code){
+							
+							Content.innerHTML = '<div style="padding:20px;">Соединение с сервером</div>';							
+												
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase.js",function(){
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js",function(){
+							$.getScript("https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js",function(){
+
+							
+							  var config = {
+								apiKey: "AIzaSyAlY9tw41_5PB48V_1darNf8iZrvOU80qc",
+								authDomain: "blogik-298d7.firebaseapp.com",
+								databaseURL: "https://blogik-298d7.firebaseio.com",
+								storageBucket: "blogik-298d7.appspot.com",
+								messagingSenderId: "825064036383"
+							  };
+							  firebase.initializeApp(config);
+
+							  
+									app.db.transaction(function(tx) {
+									
+									var Res = {}
+									Content.innerHTML = '<div style="padding:20px;">Загрузка заметок</div>';
+										tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
+										function(tx, result) {
+											Res.notes = []; 
+											for(var i=0; i<result.rows.length; i++){
+												Res.notes.push(result.rows[i])
+											}
+											
+											Content.innerHTML = '<div style="padding:20px;">Загрузка путешествий</div>';
+										tx.executeSql(" SELECT id, name, description, date FROM travel", [],
+										function(tx, result) {
+											Res.travels = []; 
+											for(var i=0; i<result.rows.length; i++){
+												Res.travels.push(result.rows[i])
+											}
+											console.info();
+											Content.innerHTML = '<div style="padding:20px;">Загрузка...</div>';
+											
+									
+																				
+										var xhr = new XMLHttpRequest();
+										var bUploadProgress = document.getElementById('bUploadProgress')
+										xhr.upload.addEventListener('progress', function (e) {
+										     Content.innerHTML = '<div style="padding:20px;">Загрузка на сервер ' +
+												Math.round(100*(e.loaded / e.total)) + '\u00a0%'
+											+ '</div>';
+											
+										}, false);
+
+										xhr.onreadystatechange = function () {
+											if (this.readyState == 4) {
+												if(this.status == 200) {
+
+													 Content.innerHTML = this.responseText;
+
+												} else {
+												    Content.innerHTML = ('Ошибка загузки...')
+												}
+											}
+										};
+
+										xhr.upload.addEventListener('load', function(e) {
+											 Content.innerHTML = '<div style="padding:20px;">Загружено!</div>';
+										});
+
+										xhr.upload.addEventListener( 'error', function(e) {
+											Content.innerHTML = '<div style="padding:20px;">ОШИБКА! '+e+'</div>';
+										});										
+										
+										xhr.open('POST', 'http://org.pohodnik58.ru/ajax/blog/import.php?code='+code, true);
+
+										var data = new FormData();
+										data.append('file', new Blob([JSON.stringify(Res)],{type:'application/json'}));
+										//data.append('code', code);
+										xhr.send(data);	
+											
+										/*	
+											firebase.database().ref(code).set(Res).then(function(){
+												Content.innerHTML = '<div style="padding:20px;">Загрузка данных на промежуточный сервер прошла успешно</div>';
+											});
+											
+										*/
+
+											
+
+											
+										},app.sqlError)	
+											
+											
+											
+											
+											
+										},app.sqlError)	
+
+
+										
+										
+										
+										
+									})						  
+							  
+
+							  
+							})
+							})
+							})
+	
+											
+											
+									
+						}
+
+					
+					
 						Content.innerHTML = 'Загрузка заметок';
-							tx.executeSql(" SELECT id, note, order_item, id_travel, date, lat, lon FROM notes", [],
-							function(tx, result) {
-								Res.notes = []; 
-								for(var i=0; i<result.rows.length; i++){
-									Res.notes.push(result.rows[i])
+						
+						$.getScript("https://pohodnik58.github.io/putnik/assets/js/qrcodelib.js",function(){
+							$.getScript("https://pohodnik58.github.io/putnik/assets/js/WebCodeCam.min.js",function(){
+								Content.innerHTML = '';
+								var videoSelect = crEl('select',{id:'selCamera'})
+
+								Content.appendChild(crEl('div', {c:'row'}, crEl('div', {c:'input-field col s12'}, videoSelect, crEl('label','Выбрать камеру'))));
+								Content.appendChild(crEl('div', {id:'qr'}, crEl('a',{href:'javascript:void(0)', e:{click: function(){
+										go(prompt('code'))
+									}}}, 'alt')))
+
+								function gotDevices(deviceInfos) {
+
+								  for (var i = 0; i !== deviceInfos.length; ++i) {
+									var deviceInfo = deviceInfos[i];
+									if (deviceInfo.kind === 'videoinput') {
+									  videoSelect.appendChild(crEl('option',{value:deviceInfo.deviceId},deviceInfo.label || 'camera ' + (videoSelect.length + 1) ));
+										
+									} 
+								  }
+								  
+								   $(videoSelect).material_select();
+
+								}
+
+								navigator.mediaDevices.enumerateDevices().then(gotDevices)
+
+								videoSelect.onchange = function(){
+									var th = this;
+									var qr = document.getElementById("qr");
+									var canv = crEl('canvas',{id:'qr-canvas',s:'width:300px; height:300px'});
+									
+									qr.innerHTML = "<br>"
+									
+									qr.appendChild(	crEl('div',{s:'padding:20px; texta-lign:center;'},
+									crEl('div',{s:'width:300px; outline:1px solid red; height:300px; margin:0 auto; position:relative'},
+										canv
+									)));
+									
+									
+									
+									$(canv).WebCodeCam({
+										ReadQRCode: true, // false or true
+										ReadBarecode: true, // false or true
+										width: 300,
+										height: 300,
+										videoSource: {  
+												id: th.value,      //default Videosource
+												maxWidth: 300, //max Videosource resolution width
+												maxHeight: 300 //max Videosource resolution height
+										},
+										flipVertical: false,  // false or true
+										flipHorizontal: false,  // false or true
+										zoom: -1, // if zoom = -1, auto zoom for optimal resolution else int
+										beep: "https://pohodnik58.github.io/putnik/assets/js/beep.mp3", // string, audio file location
+										autoBrightnessValue: false, // functional when value autoBrightnessValue is int
+										brightness: 0, // int 
+										grayScale: false, // false or true
+										contrast: 0, // int 
+										threshold: 0, // int 
+										sharpness: [], //or matrix, example for sharpness ->  [0, -1, 0, -1, 5, -1, 0, -1, 0]
+										resultFunction: function(resText, lastImageSrc) {
+											
+											
+											go(resText)		
+											
+											
+											
+											
+											
+											
+										},
+										getUserMediaError: function(error) {
+											alert(error)
+										},
+										cameraError: function(error) {
+											alert(error)
+										}
+									});
 								}
 								
-								Content.innerHTML = 'Загрузка путешествий';
-							tx.executeSql(" SELECT id, name, description, date FROM travel", [],
-							function(tx, result) {
-								Res.travels = []; 
-								for(var i=0; i<result.rows.length; i++){
-									Res.travels.push(result.rows[i])
-								}
-								console.info();
-								Content.innerHTML = 'Отпавка...';
-								$.post("http://pohodnik58.ru/putnik_export.php",{data:JSON.stringify(Res)},function(d){
-									Content.innerHTML = d;
-								}).fail(function(e) {
-    Content.innerHTML = "Ошибка." + JSON.stringify(e);
-  })
-								
-							},app.sqlError)	
 								
 								
 								
-								
-								
-							},app.sqlError)	
-
-
-							
-							
-							
-							
+	
+							})
 						})
+					
+						break;
+						
+						
+						
+
+
 					break;
 					
 					
