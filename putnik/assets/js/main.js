@@ -150,11 +150,11 @@ var app = {
 											Content.innerHTML = '<div style="padding:20px;">ОШИБКА! '+e+'</div>';
 										});										
 										
-										xhr.open('POST', 'http://org.pohodnik58.ru/ajax/blog/import.php', true);
+										xhr.open('POST', 'http://org.pohodnik58.ru/ajax/blog/import.php?code='+code, true);
 
 										var data = new FormData();
 										data.append('file', new Blob([JSON.stringify(Res)],{type:'application/json'}));
-										data.append('code', code);
+										//data.append('code', code);
 										xhr.send(data);	
 											
 										/*	
