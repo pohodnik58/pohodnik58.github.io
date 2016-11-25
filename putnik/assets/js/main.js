@@ -939,7 +939,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 						  gStream.getTracks().forEach(track => track.stop());
 						
 							$("#modal").remove();
-						}}},'img')
+						}}},'СФОТКАТЬ')
 					), function(){
 
 						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -961,7 +961,46 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 
 				},
 			"insertGif":function(callback, txt, nodes){
-				app.full(crEl('button',{e:{click:function(){$("#modal").remove()}}},'gif'))
+				var w = 200, h = 200;
+				var canvas = crEl('canvas', {width:w+'px', height:h+'px'});
+				var context = canvas.getContext('2d');
+				window.videoStreamUrl = false;
+				window.gStream = null;
+					app.full(crEl('div',
+						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
+						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
+
+							gifshot.createGIF(function(obj) {
+								if(!obj.error) {
+									var image = obj.image,
+									animatedImage = document.createElement('img');
+									animatedImage.src = image;
+									  callback(animatedImage)			
+									  gStream.getTracks().forEach(track => track.stop());
+									  $("#modal").remove();
+								}
+							});
+
+						}}},'ЗАПИСЬ')
+					), function(){
+
+						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+						window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
+
+						navigator.getUserMedia({video: true}, function (stream) {
+						  videoStreamUrl = window.URL.createObjectURL(stream);
+						  gStream = stream
+						  document.getElementById('addPhotoVideo').src = videoStreamUrl;
+						}, function () {
+						  console.log('что-то не так с видеостримом или пользователь запретил его использовать :P');
+						});
+						
+						
+						
+						
+					})
+					
+
 			},
 
 			
