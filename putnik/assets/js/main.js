@@ -646,14 +646,72 @@ app.notes = {
 					var nCon = crEl('div',{s:'padding:20px'})
 					Content.appendChild(nCon);
 					nCon.appendChild(crEl('h1',"Заметка #" + result.rows[0].id))
-					var d = new Date(result.rows[0].id*1000)
+					var d = new Date(result.rows[0].date*1000)
 					nCon.appendChild(crEl('div',"Дата: " , crEl('strong',d.toLocaleDateString() + '\u00a0' + d.toTimeString().substr(0,5))))
-					nCon.appendChild(crEl('div',"Координаты: " , crEl('a',{href:'geo:' + result.rows[0].lat+','+result.rows[0].lon}, result.rows[0].lat+ '\u00a0-\u00a0' + result.rows[0].lon)))
+					nCon.appendChild(crEl('div',"Координаты: " , crEl('a',{href:'geo:' + result.rows[0].lat+','+result.rows[0].lon}, result.rows[0].lat+ '\u00a0-\u00a0' + result.rows[0].lon)));
+					
+					var id_note = result.rows[0].id;
 					
 					var p = crEl('p')
 						p.innerHTML = result.rows[0].note;
+						
+						
+						
 					nCon.appendChild(p)
+					
+					
+					
+					
+					
+					
+					
+					
 					Content.appendChild(nCon)
+					
+					
+					
+setTimeout(function(){
+						p.querySelectorAll('img').forEach(function(img){
+							
+							function compress(source_img_obj, quality, maxWidth, output_format){
+								var mime_type = "image/jpeg";
+								if(typeof output_format !== "undefined" && output_format=="png"){
+									mime_type = "image/png";
+								}
+
+								maxWidth = maxWidth || 1000;
+								var natW = source_img_obj.naturalWidth;
+								var natH = source_img_obj.naturalHeight;
+								var ratio = natH / natW;
+								if (natW > maxWidth) {
+									natW = maxWidth;
+									natH = ratio * maxWidth;
+								}
+
+								var cvs = document.createElement('canvas');
+								cvs.width = natW;
+								cvs.height = natH;
+
+								var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0, natW, natH);
+								return cvs.toDataURL(mime_type, quality/100);
+							 
+							}
+							img.onclick = function(){
+							this.src =  compress(this, 75, 800,'jpg');
+							if(confirm('save?')){
+								app.db.transaction(function(tx) {
+									tx.executeSql(" UPDATE notes SET note='" + p.innerHTML + "' WHERE id=" + id_note + "", [],
+									function(tx, result) {
+										alert('success')
+									})
+								})
+							}
+							}
+						})
+						},100)					
+					
+					
+					
 				} else {
 				Content.innerHTML ='sdff'
 				}
@@ -802,7 +860,37 @@ app.notes = {
 						var oFReader = new FileReader();
 							oFReader.readAsDataURL(this.files[i]);
 							oFReader.onload = function (oFREvent) {
-								container.appendChild(crEl('img',{s:'max-width:100%', src:oFREvent.target.result, alt:'photo'+i}))
+function compress(source_img_obj, quality, maxWidth, output_format){
+								var mime_type = "image/jpeg";
+								if(typeof output_format !== "undefined" && output_format=="png"){
+									mime_type = "image/png";
+								}
+
+								maxWidth = maxWidth || 1000;
+								var natW = source_img_obj.naturalWidth;
+								var natH = source_img_obj.naturalHeight;
+								var ratio = natH / natW;
+								if (natW > maxWidth) {
+									natW = maxWidth;
+									natH = ratio * maxWidth;
+								}
+
+								var cvs = document.createElement('canvas');
+								cvs.width = natW;
+								cvs.height = natH;
+
+								var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0, natW, natH);
+								return cvs.toDataURL(mime_type, quality/100);
+							 
+							}
+							
+							
+								var img = crEl('img',{s:'max-width:100%', src:oFREvent.target.result, alt:'photo'+i});
+									img.onload = function(){this.src = compress(this, 75, 800,'jpg');
+											container.appendChild(img)
+									}
+								
+								
 							};
 					}
 
