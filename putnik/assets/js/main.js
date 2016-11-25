@@ -754,6 +754,8 @@ setTimeout(function(){
 		Footer.appendChild( document.createTextNode('|'));
 		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'insertH2',c:'waves-effect editor-toolbar-button'},new MIcon('title')));
 		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'insertImg',c:'waves-effect editor-toolbar-button'},new MIcon('insert_photo')));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'insertPhoto',c:'waves-effect editor-toolbar-button'},new MIcon('camera_enhance')));
+		Footer.appendChild( crEl('a',{href:'javascript:void(0)', action:'insertGif',c:'waves-effect editor-toolbar-button'},new MIcon('gif')));
 	
 	
 	
@@ -908,7 +910,31 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				
 				document.getElementById("searchForm").onsubmit = null
 				
-			}
+			},
+			"insertPhoto":function(callback, txt, nodes){
+					app.full(crEl('div',
+						crEl('video',{ id:'addPhotoVideo'}),
+						crEl('button',{e:{click:function(){
+							gifshot.stopVideoStreaming();
+							$("#modal").remove();
+						}}},'img')
+					), function(){
+						gifshot.takeSnapShot({webcamVideoElement:document.getElementById('addPhotoVideo')},function(obj) {
+							if(!obj.error) {
+								var image = obj.image,
+								animatedImage = document.createElement('img');
+								alert(image)
+								animatedImage.src = image;
+								document.body.appendChild(animatedImage);
+							}
+						});	
+					})
+					
+
+				},
+			"insertGif":function(callback, txt, nodes){
+				app.full(crEl('button',{e:{click:function(){$("#modal").remove()}}},'gif'))
+			},
 
 			
 		});
@@ -937,5 +963,12 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 	}
 }
 
+app.full = function(body,cb){
+		this._el = crEl('div',{id:'modal',s:'position:fixed; z-index:99999; top:0; left:0; width:100%; height:100%; background:#fff;'}, body);
+		this.close = function(){ $("#modal").remove() }
+		document.body.appendChild(this._el);
+		if(typeof cb === 'function'){ cb(this) }
+		return this;
+	}
 
 		
