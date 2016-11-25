@@ -978,8 +978,8 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				var w = 200, h = 200;
 				var canvas = crEl('canvas', {width:w+'px', height:h+'px'});
 				var context = canvas.getContext('2d');
-				window.videoStreamUrl = false;
-				window.gStream = null;
+				window.videoStreamUrl1 = false;
+				window.gStream1 = null;
 					app.full(crEl('div', {s:'display: flex; align-items: center; flex-wrap: wrap; flex-direction: column;'},
 						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
 						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
@@ -991,7 +991,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 									animatedImage = document.createElement('img');
 									animatedImage.src = image;
 									  callback(animatedImage)			
-									  gStream.getTracks().forEach(track => track.stop());
+									  gStream1.getTracks().forEach(track => track.stop());
 									  $("#modal").remove();
 								}
 							});
@@ -1003,9 +1003,9 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 						window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
 
 						navigator.getUserMedia({video: true}, function (stream) {
-						  videoStreamUrl = window.URL.createObjectURL(stream);
-						  gStream = stream
-						  document.getElementById('addPhotoVideo').src = videoStreamUrl;
+						  videoStreamUrl1 = window.URL.createObjectURL(stream);
+						  gStream1 = stream
+						  document.getElementById('addPhotoVideo').src = videoStreamUrl1;
 						}, function () {
 						  console.log('что-то не так с видеостримом или пользователь запретил его использовать :P');
 						});
