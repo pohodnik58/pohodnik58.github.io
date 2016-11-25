@@ -153,7 +153,7 @@ var app = {
 										xhr.open('POST', 'http://org.pohodnik58.ru/ajax/blog/import.php', true);
 
 										var data = new FormData();
-										data.append('file', new Blob([JSON.stringify(da)],{type:'application/json'}));
+										data.append('file', new Blob([JSON.stringify(Res)],{type:'application/json'}));
 										data.append('code', code);
 										xhr.send(data);	
 											
