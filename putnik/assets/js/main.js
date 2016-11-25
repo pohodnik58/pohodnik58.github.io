@@ -912,29 +912,29 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				
 			},
 			"insertPhoto":function(callback, txt, nodes){
-			
-			var context = canvas.getContext('2d');
-    var videoStreamUrl = false;
+				var canvas = document.getElementById('canvas');
+				var context = canvas.getContext('2d');
+				var videoStreamUrl = false;
 			
 					app.full(crEl('div',
 						crEl('video',{ id:'addPhotoVideo'}),
 						crEl('button',{e:{click:function(){
 
 						var video = document.getElementById('addPhotoVideo');
-if (!videoStreamUrl) alert('То-ли вы не нажали "разрешить" в верху окна, то-ли что-то не так с вашим видео стримом')
-      // переворачиваем canvas зеркально по горизонтали (см. описание внизу статьи)
-      context.translate(canvas.width, 0);
-      context.scale(-1, 1);
-      // отрисовываем на канвасе текущий кадр видео
-      context.drawImage(video, 0, 0, video.width, video.height);
-      // получаем data: url изображения c canvas
-      var base64dataUrl = canvas.toDataURL('image/png');
-      context.setTransform(1, 0, 0, 1, 0, 0); // убираем все кастомные трансформации canvas
-      // на этом этапе можно спокойно отправить  base64dataUrl на сервер и сохранить его там как файл (ну или типа того) 
-      // но мы добавим эти тестовые снимки в наш пример:
-      var img = new Image();
-      img.src = base64dataUrl;
-      callback(img)						
+							if (!videoStreamUrl) alert('То-ли вы не нажали "разрешить" в верху окна, то-ли что-то не так с вашим видео стримом')
+						  // переворачиваем canvas зеркально по горизонтали (см. описание внизу статьи)
+						  context.translate(canvas.width, 0);
+						  context.scale(-1, 1);
+						  // отрисовываем на канвасе текущий кадр видео
+						  context.drawImage(video, 0, 0, video.width, video.height);
+						  // получаем data: url изображения c canvas
+						  var base64dataUrl = canvas.toDataURL('image/png');
+						  context.setTransform(1, 0, 0, 1, 0, 0); // убираем все кастомные трансформации canvas
+						  // на этом этапе можно спокойно отправить  base64dataUrl на сервер и сохранить его там как файл (ну или типа того) 
+						  // но мы добавим эти тестовые снимки в наш пример:
+						  var img = new Image();
+						  img.src = base64dataUrl;
+						  callback(img)						
 						if(videoStreamUrl.getVideoTracks) {videoStreamUrl.getVideoTracks()[0].stop()}
 						
 							$("#modal").remove();
