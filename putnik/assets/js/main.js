@@ -110,7 +110,7 @@ var app = {
 										
 										upload(way,array[index], function(){
 											Content.innerHTML += '<div style="padding:20px;">Загружено ' + (index+1) + ' из ' + array.length + '</div>'
-											if(array[index+1]){_iter(index+1, array, way, cb); } else {
+											if(index+1<array.length){_iter(index+1, array, way, cb); } else {
 												cb();
 											}												
 										})
