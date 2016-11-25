@@ -648,7 +648,7 @@ app.notes = {
 					nCon.appendChild(crEl('h1',"Заметка #" + result.rows[0].id))
 					var d = new Date(result.rows[0].date*1000)
 					nCon.appendChild(crEl('div',"Дата: " , crEl('strong',d.toLocaleDateString() + '\u00a0' + d.toTimeString().substr(0,5))))
-					nCon.appendChild(crEl('div',"Координаты: " , crEl('a',{href:'geo:' + result.rows[0].lat+','+result.rows[0].lon}, result.rows[0].lat+ '\u00a0-\u00a0' + result.rows[0].lon)));
+					nCon.appendChild(crEl('div',"Координаты: " , crEl('a',{href:'geo:' + result.rows[0].lat+','+result.rows[0].lon}, result.rows[0].lat+ '\u00a0/\u00a0' + result.rows[0].lon)));
 					
 					var id_note = result.rows[0].id;
 					
