@@ -917,7 +917,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				var context = canvas.getContext('2d');
 				window.videoStreamUrl = false;
 				window.gStream = null;
-					app.full(crEl('div',
+					app.full(crEl('div', {s:'display: flex; align-items: center; flex-wrap: wrap; flex-direction: column;'},
 						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
 						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
 
@@ -966,7 +966,7 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				var context = canvas.getContext('2d');
 				window.videoStreamUrl = false;
 				window.gStream = null;
-					app.full(crEl('div',
+					app.full(crEl('div', {s:'display: flex; align-items: center; flex-wrap: wrap; flex-direction: column;'},
 						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
 						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
 
