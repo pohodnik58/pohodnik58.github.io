@@ -912,14 +912,14 @@ function compress(source_img_obj, quality, maxWidth, output_format){
 				
 			},
 			"insertPhoto":function(callback, txt, nodes){
-			
-				var canvas = crEl('canvas', {width:window.outerWidth+'px', height:window.outerHeight+'px'});
+				var w = 800, h = 600;
+				var canvas = crEl('canvas', {width:w+'px', height:h+'px'});
 				var context = canvas.getContext('2d');
 				var videoStreamUrl = false;
 			
 					app.full(crEl('div',
-						crEl('video',{ id:'addPhotoVideo',width:window.outerWidth+'px', height:window.outerHeight+'px'}),
-						crEl('button',{s:'position:absolute; left:45%; bottom:5%',e:{click:function(){
+						crEl('video',{ id:'addPhotoVideo',width:w+'px', height:h+'px'}),
+						crEl('button',{c:'btn btn-block btn-primary',e:{click:function(){
 
 						var video = document.getElementById('addPhotoVideo');
 							if (!videoStreamUrl) alert('То-ли вы не нажали "разрешить" в верху окна, то-ли что-то не так с вашим видео стримом')
