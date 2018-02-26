@@ -8,7 +8,7 @@ function drawChart() {
 
     ];
     data.forEach(function(x) {
-        ddd.push([new Date(x[0] * 1000), x[5], x[4], x[6]])
+        ddd.push([new Date((x[0] * 1000) - (60000 * 60 * 3)), x[5], x[4], x[6]])
     })
     var gdata = google.visualization.arrayToDataTable(ddd);
     var options = {
