@@ -47,7 +47,7 @@
 
       button.addEventListener('pointerup', function(event) {
         navigator.bluetooth.requestDevice({
-            filters: [{ services: ['heart_rate'] }]
+            filters: [{ services: [/*'heart_rate'*/] }]
           })
           .then((device) => {
             return device.gatt.connect();
