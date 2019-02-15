@@ -1,0 +1,22 @@
+{
+  "name": "ПОХОДНИК",
+  "short_name": "ПОХОДНИК",
+  "theme_color": "#006064",
+  "background_color": "#006064",
+  "display": "standalone",
+  "orientation": "portrait",
+  "Scope": "/app/",
+  "start_url": "/index.html",
+  "icons": [
+	{
+		"src": "images/icons/android-chrome-192x192.png",
+		"sizes": "192x192",
+		"type": "image/png"
+	},
+	{
+		"src": "images/icons/android-chrome-512x512.png",
+		"sizes": "512x512",
+		"type": "image/png"
+	}
+  ]
+}
