@@ -23,43 +23,32 @@
 
 
 
-<nav>
+<nav id="header">
 	<div class="nav-wrapper">
 		<a href="#" data-target="slide-out" class="sidenav-trigger show-on-medium-and-up">
 			<i class="material-icons">menu</i>
 		</a>
 		<strong>Походники</strong>
-		<ul class="right">
-			<li><a href="sass.html"><i class="material-icons">search</i></a></li>
-			<li><a href="badges.html"><i class="material-icons">view_module</i></a></li>
-			<li><a href="collapsible.html"><i class="material-icons">refresh</i></a></li>
-			<li><a href="mobile.html"><i class="material-icons">more_vert</i></a></li>
-		</ul>
+		<ul class="right" id="headerRight"></ul>
 	</div>
 </nav>
-<nav>
+<nav id="search" style="display: none;">
 	<div class="nav-wrapper">
-		<form>
+		<form onsubmit="app.search.hide();app.header.show()">
 			<div class="input-field">
 				<input id="search" type="search" required>
 				<label class="label-icon" for="search"><i class="material-icons">search</i></label>
-				<i class="material-icons">close</i>
+				<i onclick="app.search.hide();app.header.show()" class="material-icons">close</i>
 			</div>
 		</form>
 	</div>
 </nav>
-<div class="progress">
-	<div class="determinate" style="width: 70%"></div>
+<div class="progress" id="indeterminateProgress" style="display:none">
+	<div class="indeterminate"></div>
 </div>
 
-<main>
-<div class="container">
-	<div class="row">
-		content
-	</div>
-</div>
-</main>
-<footer class="page-footer">
+<main id="main"></main>
+<footer class="page-footer" id="footer">
 	<div class="footer-copyright">
 		<div class="container">
 			© 2014 Copyright Text
@@ -79,8 +68,8 @@
 	</ul>
 </div>
 <ul id="slide-out" class="sidenav">
-	<li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-	<li><a href="#!">Second Link</a></li>
+	<li><a href="#welcome"><i class="material-icons">cloud</i>welcome Link With Icon</a></li>
+	<li><a href="#about">about Link</a></li>
 	<li><div class="divider"></div></li>
 	<li><a class="subheader">Subheader</a></li>
 	<li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
@@ -88,9 +77,15 @@
 
 </body>
 
+<script src="vendors/crEl/crel.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/components.js"></script>
+<script src="vendors/modules/modules.js"></script>
+<script src="js/modules.define.custom.js"></script>
+<script src="js/modules.define.vendors.js"></script>
 <script src="vendors/navigo/navigo.min.js"></script>
 <script src="vendors/materialize/materialize.min.js"></script>
-<script src="js/main.js"></script>
+
 <script src="js/router.js"></script>
 
 <script type="text/javascript">
