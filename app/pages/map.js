@@ -18,9 +18,10 @@ app.mainFloatingButton.show().empty().append(new Icon('my_location'))
 
     function onLocationFound(e) {
         var radius = e.accuracy / 2;
-
-        L.marker(e.latlng).addTo(map)
-            .bindPopup("Вы находитесь в радиусе " + radius + " м. от этой точки").openPopup();
+        L.popup()
+            .setLatLng(e.latlng)
+            .setContent("Вы находитесь в радиусе " + parseInt(radius) + " м. от этой точки")
+            .openOn(map);
 
     }
     function onLocationError(e) {
