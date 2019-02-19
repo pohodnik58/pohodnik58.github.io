@@ -4,9 +4,7 @@ let cacheName = "MyCacheV" + version;
 
 let filesToCache = [
 	"/",
-	"/index.html",
-	"js/main.js",
-	"css/main.js"
+	"/index.html"
 ];
 
 self.addEventListener("install", function(event) {
