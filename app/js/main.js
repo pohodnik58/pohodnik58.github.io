@@ -10,6 +10,8 @@ app = {
     headerRight:document.getElementById('headerRight'),
     search:document.getElementById('search'),
     footer:document.getElementById('footer'),
+    mainFloatingButton:document.getElementById('mainFloatingButton'),
+    floatingButtons:document.getElementById('floatingButtons'),
     indeterminateProgress: document.getElementById('indeterminateProgress'),
 }
 
@@ -26,8 +28,8 @@ Element.prototype.append = function(obj){
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelector('.sidenav');
     elems.empty().append([
-        new Li( new A({href:'welcome', onclick:function(){app.sidenav.close()}},'welcome') ),
-        new Li( new A({href:'about', onclick:function(){app.sidenav.close()}},'about') ),
+        new Li( new A({href:'#welcome', onclick:function(){app.sidenav.close()}},'welcome') ),
+        new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}},'about') ),
         new Li( new A({href:'#map', onclick:function(){app.sidenav.close()}},'map') ),
     ])
     app.sidenav = M.Sidenav.init(elems, {});

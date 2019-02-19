@@ -10,6 +10,25 @@
         {
             maxZoom: 18
         }).addTo(map);
+app.mainFloatingButton.show().empty().append(new Icon('my_location'))
+    app.floatingButtons.empty();
+    app.mainFloatingButton.onclick = function () {
+        map.locate({setView: true, maxZoom: 16});
+    }
+
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+
+        L.marker(e.latlng).addTo(map)
+            .bindPopup("Вы находитесь в радиусе " + radius + " м. от этой точки").openPopup();
+
+    }
+    function onLocationError(e) {
+        app.error(e.message);
+    }
+
+    map.on('locationerror', onLocationError);
+    map.on('locationfound', onLocationFound);
 
     function showGPX(url){
         new L.GPX(url, {

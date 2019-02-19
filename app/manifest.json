@@ -6,7 +6,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "Scope": "/app/",
-  "start_url": "/index.html",
+  "start_url": "/app/index.html",
   "icons": [
 	{
 		"src": "images/icons/android-chrome-192x192.png",
