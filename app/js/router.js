@@ -14,9 +14,16 @@ router
             modules.use('about')
         },
 
-        'map': function () {
-            modules.use('map')
+        'hiking': function () {
+            modules.use('hiking')
         },
+        'members': function () {
+            modules.use('members')
+        },
+        'route': function () {
+            modules.use('route')
+        },
+
         '*': function () {
             modules.use('welcome')
         }

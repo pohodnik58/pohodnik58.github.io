@@ -27,15 +27,14 @@ Element.prototype.append = function(obj){
 
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelector('.sidenav');
-    elems.empty().append([
-        new Li( new A({href:'#welcome', onclick:function(){app.sidenav.close()}},'welcome') ),
-        new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}},'about') ),
-        new Li( new A({href:'#map', onclick:function(){app.sidenav.close()}},'map') ),
-    ])
-    app.sidenav = M.Sidenav.init(elems, {});
+
+    app.sidenav = M.Sidenav.init(elems, {draggable:true});
     var elems = document.querySelectorAll('.fixed-action-btn');
     var instances = M.FloatingActionButton.init(elems, {});
-    app.headerRight.empty().append([
+    app.headerRight.empty();
+
+    /*
+    * .append([
         new Li( new A({onclick:function(){
             app.search.show();
             app.header.hide();
@@ -44,13 +43,27 @@ document.addEventListener('DOMContentLoaded', function() {
             new Icon('search')
         ))
     ])
+    * */
 
     fetch('https://org.pohodnik58.ru/ajax/app/hiking_all_data.php?id_hiking=44').then(function(res){
         return res.json()
     }).then(function(result){
         app.hiking = result;
-        app.error(app.hiking.name);
-        console.log(app.hiking)
+
+        elems.empty().append([
+            new Li(
+              crEl({s:'padding:32px 32px 0; margin-bottom:8px;', c:'teal'},
+                crEl('img',{c:'circle', width:150, height:150, src: 'https://org.pohodnik58.ru/'+app.hiking.ava}),
+                  crEl({s:'font-size:16px; line-height:24px; margin-top:16px; font-weight:500', c:'white-text'}, app.hiking.name),
+                  crEl({s:'font-size:16px; line-height:24px; padding-bottom:15px;', c:'white-text'}, app.hiking.description),
+              )
+            ),
+            new Li( new A({href:'#hiking', onclick:function(){app.sidenav.close()}}, new Icon('bookmark'), 'О походе') ),
+            new Li( new A({href:'#members', onclick:function(){app.sidenav.close()}}, new Icon('group'), 'Участники') ),
+            new Li( new A({href:'#route', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрут') ),
+            new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}},'about') )
+        ])
+
     })
 
 
