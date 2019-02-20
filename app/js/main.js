@@ -45,4 +45,13 @@ document.addEventListener('DOMContentLoaded', function() {
         ))
     ])
 
+    fetch('https://org.pohodnik58.ru/ajax/app/hiking_all_data.php?id_hiking=44').then(function(res){
+        return res.json()
+    }).then(function(result){
+        app.hiking = result;
+        app.error(app.hiking.name);
+        console.log(app.hiking)
+    })
+
+
 });
