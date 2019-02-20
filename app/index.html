@@ -87,19 +87,25 @@
 <script src="js/router.js"></script>
 
 <script type="text/javascript">
-    if('serviceWorker' in navigator) {
         try {
-			navigator.serviceWorker
-					.register(window.location.href + '/app/service-worker.js')
-					.then(function () {
-						console.log("Service Worker Registered");
-					}).catch(function (e) {
-				app.error('Ошибка регистрации ServiceWorker\n'+e.message)
-			});
+			if ('serviceWorker' in navigator) {
+				console.log('CLIENT: service worker registration in progress.');
+				navigator.serviceWorker.register('service-worker.js',{ scope: '/app/' }).then(function() {
+					console.log('CLIENT: service worker registration complete.');
+				}, function(a,b) {
+					console.log('CLIENT: service worker registration d.',a,b);
+				});
+				navigator.serviceWorker.ready.then(function(registration) {
+					console.log('Service Worker Ready');
+				});
+
+			} else {
+				app.error('CLIENT: service worker is not supported.');
+			}
 		} catch(e){
-				console.warn(e);
+			app.error(e);
+			console.warn(e);
 		}
-    }
 </script>
 
 </html>
