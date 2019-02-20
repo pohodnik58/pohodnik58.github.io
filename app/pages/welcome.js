@@ -1,4 +1,4 @@
 app.el.empty().append(
-    crEl('h1','welcome')
+    new Container( crEl('h1','welcome') )
 )
 console.log('dfdfdfdfdf')

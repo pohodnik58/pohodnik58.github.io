@@ -13,6 +13,7 @@ app = {
     mainFloatingButton:document.getElementById('mainFloatingButton'),
     floatingButtons:document.getElementById('floatingButtons'),
     indeterminateProgress: document.getElementById('indeterminateProgress'),
+    title: document.getElementById('title'),
 }
 
 Element.prototype.empty = function(){ this.innerHTML = null; return this;}
@@ -50,12 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }).then(function(result){
         app.hiking = result;
         var elems = document.querySelector('.sidenav');
+        app.title.textContent = app.hiking.name;
         elems.empty().append([
             new Li(
               crEl({s:'padding:32px 32px 0; margin-bottom:8px;', c:'teal'},
                 crEl('img',{c:'circle', width:150, height:150, src: 'https://org.pohodnik58.ru/'+app.hiking.ava}),
                   crEl({s:'font-size:16px; line-height:24px; margin-top:16px; font-weight:500', c:'white-text'}, app.hiking.name),
-                  crEl({s:'font-size:16px; line-height:24px; padding-bottom:15px;', c:'white-text'}, app.hiking.description),
+                  crEl({s:'font-size:16px; line-height:24px; padding-bottom:15px;', c:'white-text'}, app.hiking.desc),
               )
             ),
             new Li( new A({href:'#hiking', onclick:function(){app.sidenav.close()}}, new Icon('bookmark'), 'О походе') ),
