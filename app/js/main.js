@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return res.json()
     }).then(function(result){
         app.hiking = result;
-
+        var elems = document.querySelector('.sidenav');
         elems.empty().append([
             new Li(
               crEl({s:'padding:32px 32px 0; margin-bottom:8px;', c:'teal'},
