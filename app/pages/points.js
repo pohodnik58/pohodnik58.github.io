@@ -120,9 +120,9 @@ app.el.empty().append(
                      new Icon({c:'circle red'},'place'),
                         crEl('span',{c:'title'}, poi.name),
                         crEl('p', 
-                             crEl('strong', formatDistance( point2PointDistance )),
-crEl('sub', byTrackDistance.map(y=>{
-                    return crEl('a',{href:'javascript:void(0)', onclick: function(){
+                             crEl('small',{c:'text-grey'},'Напрямую: '),crEl('strong', formatDistance( point2PointDistance )),
+crEl('small',{s:'margin-left:15px'}, byTrackDistance.map(y=>{
+                    return crEl('a',{href:'javascript:void(0)', s:'margin-left:8px;', onclick: function(){
                         alert(
                             'От текущего мп до трека (напрямую): ' + formatDistance(y.toTrackDistance)+'\n' +
                             'По треку: ' + formatDistance(y.onTrackDistance)+'\n' +
