@@ -58,6 +58,8 @@ modules = {
 			srcs = srcs.filter(function(src){ return !alredyUsed.includes(src); })
 			if(srcs && srcs.length){
 				includeRecu(srcs, 0, resolve)
+			} else {
+				setTimeout(resolve,1);
 			}
 		})
 	},

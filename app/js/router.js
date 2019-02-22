@@ -20,8 +20,16 @@ router
         'members': function () {
             modules.use('members')
         },
+        'route/:id': function (data) {
+            modules.use('route').then(function(){
+                goToPoint(data.id)
+            })
+        },
         'route': function () {
             modules.use('route')
+        },
+        'points': function () {
+            modules.use('points')
         },
 
         '*': function () {

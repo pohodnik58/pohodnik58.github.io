@@ -54,19 +54,25 @@ document.addEventListener('DOMContentLoaded', function() {
         app.title.textContent = app.hiking.name;
         elems.empty().append([
             new Li(
-              crEl({s:'padding:32px 32px 0; margin-bottom:8px;', c:'teal'},
-                crEl('img',{c:'circle', width:150, height:150, src: 'https://org.pohodnik58.ru/'+app.hiking.ava}),
-                  crEl({s:'font-size:16px; line-height:24px; margin-top:16px; font-weight:500', c:'white-text'}, app.hiking.name),
-                  crEl({s:'font-size:16px; line-height:24px; padding-bottom:15px;', c:'white-text'}, app.hiking.desc),
+              crEl({c:'user-view teal'},
+                crEl('img',{c:'circle', src: 'https://org.pohodnik58.ru/'+app.hiking.ava}),
+                  new A(crEl({c:'white-text name'}, app.hiking.name)),
+                  new A(crEl({c:'white-text email'}, app.hiking.type_name)),
               )
             ),
             new Li( new A({href:'#hiking', onclick:function(){app.sidenav.close()}}, new Icon('bookmark'), 'О походе') ),
-            new Li( new A({href:'#members', onclick:function(){app.sidenav.close()}}, new Icon('group'), 'Участники') ),
+            new Li( new A({href:'#members', onclick:function(){app.sidenav.close()}},
+                new Icon('group'),
+                'Участники',
+                crEl('span',{d:{}, c:'badge'}, app.hiking.members.length.toString())
+            )),
             new Li( new A({href:'#route', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрут') ),
-            new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}},'about') )
+            new Li( new A({href:'#points', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрутные точки') ),
+            new Li(crEl({c:'divider'})),
+            new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}}, new Icon('perm_device_information'),'О приложении') )
         ])
 
     })
 
-
+        router.resolve()
 });

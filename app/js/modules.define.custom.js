@@ -12,6 +12,9 @@ modules.define('route',{
     dependensies:['leaflet','leaflet-gpx'],
     files:['pages/route.js']
 });
+modules.define('points',{
+    files:['pages/points.js']
+});
 modules.define('about',{
     files:['pages/about.js']
 });

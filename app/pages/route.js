@@ -1,4 +1,4 @@
-(function(){
+
     app.footer.hide()
     var mapEl = crEl({s:'width:100%;height:calc(100vh - 64px)'});
     app.el.empty().append(
@@ -54,4 +54,9 @@ app.mainFloatingButton.show().empty().append(new Icon('my_location'))
     showGPX('gpx/sn_more.gpx')
 
 
-})()
+
+function goToPoint(id){
+        var point = app.hiking.route_objects.filter(function(x){return x.id = id})[0];
+    map.setView(point.coordinates, 16);
+    L.marker(point.coordinates).addTo(map)
+}

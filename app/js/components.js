@@ -28,10 +28,14 @@ function A() {
     a.addEventListener('click', function(event){
         if(this.href && this.href.length && this.href.indexOf(':')==-1){
             event.preventDefault();
+            event.stopPropagation();
             app.navigate(this.getAttribute('href'))
             return false;
         }
     })
+    if(!a.href || !a.href.length){
+        a.href = 'javascript:void(0)'
+    }
     return a;
 }
 
