@@ -116,7 +116,7 @@ app.el.empty().append(
                 }
             })
             
-             return new A({href:'#route/'+poi.id,c:'collection-item avatar'},
+             return new A({href:'#route/'+poi.id, title:poi.id, c:'collection-item avatar'},
                      new Icon({c:'circle red'},'place'),
                         crEl('span',{c:'title'}, poi.name),
                         crEl('p', 

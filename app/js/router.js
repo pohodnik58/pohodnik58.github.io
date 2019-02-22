@@ -3,7 +3,10 @@ router.notFound(function () {
     console.log('notfound')
 });
 router.hooks({
-    before: function(done, params) { app.indeterminateProgress.show(); console.log('before_nav', params); setTimeout(done,1); },
+    before: function(done, params) {
+        app.indeterminateProgress.show(); console.log('before_nav', params);
+        setTimeout(done,1);
+        },
     after: function(params) {
         app.indeterminateProgress.hide()
     }

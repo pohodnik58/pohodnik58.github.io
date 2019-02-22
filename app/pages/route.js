@@ -57,6 +57,9 @@ app.mainFloatingButton.show().empty().append(new Icon('my_location'))
 
 function goToPoint(id){
         var point = app.hiking.route_objects.filter(function(x){return x.id = id})[0];
-    map.setView(point.coordinates, 16);
-    L.marker(point.coordinates).addTo(map)
+    L.popup()
+        .setLatLng(JSON.parse(point.coordinates))
+        .setContent(point.name)
+        .openOn(map);
+    map.setView(JSON.parse(point.coordinates), 16);
 }

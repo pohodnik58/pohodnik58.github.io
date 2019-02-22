@@ -14,6 +14,38 @@ app = {
     floatingButtons:document.getElementById('floatingButtons'),
     indeterminateProgress: document.getElementById('indeterminateProgress'),
     title: document.getElementById('title'),
+    init: function(){
+        if(!app.hiking){
+            app.hiking = ls.get('data');
+            if(!app.hiking){
+                app.error('Нет данных');
+                return false;
+            } else {
+                app.hiking = JSON.parse(app.hiking);
+            }
+        }
+        app.title.textContent = app.hiking.name;
+        var elems = document.querySelector('.sidenav');
+        elems.empty().append([
+            new Li(
+                crEl({c:'user-view teal'},
+                    crEl('img',{c:'circle', src: 'https://org.pohodnik58.ru/'+app.hiking.ava}),
+                    new A(crEl({c:'white-text name'}, app.hiking.name)),
+                    new A(crEl({c:'white-text email'}, app.hiking.type_name)),
+                )
+            ),
+            new Li( new A({href:'#hiking', onclick:function(){app.sidenav.close()}}, new Icon('bookmark'), 'О походе') ),
+            new Li( new A({href:'#members', onclick:function(){app.sidenav.close()}},
+                new Icon('group'),
+                'Участники',
+                crEl('span',{d:{}, c:'badge'}, app.hiking.members.length.toString())
+            )),
+            new Li( new A({href:'#route', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрут') ),
+            new Li( new A({href:'#points', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрутные точки') ),
+            new Li(crEl({c:'divider'})),
+            new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}}, new Icon('perm_device_information'),'О приложении') )
+        ])
+    }
 }
 
 Element.prototype.empty = function(){ this.innerHTML = null; return this;}
@@ -34,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var instances = M.FloatingActionButton.init(elems, {});
     app.headerRight.empty();
 
+    app.init()
     /*
     * .append([
         new Li( new A({onclick:function(){
@@ -46,33 +79,21 @@ document.addEventListener('DOMContentLoaded', function() {
     ])
     * */
 
-    fetch('https://org.pohodnik58.ru/ajax/app/hiking_all_data.php?id_hiking=44').then(function(res){
-        return res.json()
-    }).then(function(result){
-        app.hiking = result;
-        var elems = document.querySelector('.sidenav');
-        app.title.textContent = app.hiking.name;
-        elems.empty().append([
-            new Li(
-              crEl({c:'user-view teal'},
-                crEl('img',{c:'circle', src: 'https://org.pohodnik58.ru/'+app.hiking.ava}),
-                  new A(crEl({c:'white-text name'}, app.hiking.name)),
-                  new A(crEl({c:'white-text email'}, app.hiking.type_name)),
-              )
-            ),
-            new Li( new A({href:'#hiking', onclick:function(){app.sidenav.close()}}, new Icon('bookmark'), 'О походе') ),
-            new Li( new A({href:'#members', onclick:function(){app.sidenav.close()}},
-                new Icon('group'),
-                'Участники',
-                crEl('span',{d:{}, c:'badge'}, app.hiking.members.length.toString())
-            )),
-            new Li( new A({href:'#route', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрут') ),
-            new Li( new A({href:'#points', onclick:function(){app.sidenav.close()}}, new Icon('map'), 'Маршрутные точки') ),
-            new Li(crEl({c:'divider'})),
-            new Li( new A({href:'#about', onclick:function(){app.sidenav.close()}}, new Icon('perm_device_information'),'О приложении') )
-        ])
 
-    })
 
         router.resolve()
 });
+
+function isLocalStorageAvailable() { try { return 'localStorage' in window && window['localStorage'] !== null; } catch (e) { return false; } }
+if (isLocalStorageAvailable()) {
+    ls = {
+        set: function(key, value) { localStorage.setItem(key, value) },
+        get: function(key) { return localStorage.getItem(key) },
+        unset: function(key) { localStorage.removeItem(key) },
+        clear: function() { localStorage.clear() },
+        empty: function(key) { return !(localStorage.getItem(key)) }
+    }
+    window.ls = ls;
+} else {
+    alert("You need in modern browser");
+}
