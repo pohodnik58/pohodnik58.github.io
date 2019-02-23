@@ -1,7 +1,6 @@
 app = {
-    error: function(msg){
-        M.toast({html: '<pre>'+msg+'</pre>'})
-    },
+    error: function(msg){ M.toast({html: '<pre>'+msg+'</pre>'})},
+    msg: function(msg){ M.toast({html: msg})},
     navigate: function(url){
         router.navigate(url);
     },
@@ -34,6 +33,8 @@ app = {
                     new A(crEl({c:'white-text email'}, app.hiking.type_name)),
                 )
             ),
+            new Li( new A({href:'#welcome', onclick:function(){app.sidenav.close()}}, new Icon('public'), 'Главная') ),
+            new Li(crEl({c:'divider'})),
             new Li( new A({href:'#hiking', onclick:function(){app.sidenav.close()}}, new Icon('bookmark'), 'О походе') ),
             new Li( new A({href:'#members', onclick:function(){app.sidenav.close()}},
                 new Icon('group'),
@@ -96,4 +97,12 @@ if (isLocalStorageAvailable()) {
     window.ls = ls;
 } else {
     alert("You need in modern browser");
+}
+function formatDistance(ditanceKM){
+    if(ditanceKM<=0){return '~';}
+    if(ditanceKM<1){
+        return Math.round(ditanceKM/1000).toString()+'\u00a0м.'
+    } else {
+        return ditanceKM.toFixed(2)+'\u00a0км.'
+    }
 }

@@ -23,6 +23,9 @@ app.mainFloatingButton.show().empty().append(new Icon('my_location'))
             .setContent("Вы находитесь в радиусе " + parseInt(radius) + " м. от этой точки")
             .openOn(map);
 
+        ls.set('lastPositionTime', new Date().toString());
+        ls.set('lastPosition', JSON.stringify([e.latlng.lat, e.latlng.lng]));
+
     }
     function onLocationError(e) {
         app.error(e.message);
@@ -56,10 +59,27 @@ app.mainFloatingButton.show().empty().append(new Icon('my_location'))
 
 
 function goToPoint(id){
-        var point = app.hiking.route_objects.filter(function(x){return x.id = id})[0];
+        var poi = app.hiking.route_objects.filter(function(x){return x.id == id})[0];
     L.popup()
-        .setLatLng(JSON.parse(point.coordinates))
-        .setContent(point.name)
+        .setLatLng(JSON.parse(poi.coordinates))
+        .setContent(crEl({},
+            crEl('h5', poi.name),
+            crEl('p',
+                crEl('div',{c:'text-grey'},'Напрямую: '),
+                poi.myDistance?crEl('strong', formatDistance( poi.myDistance )):'-',
+                crEl('ul',{}, poi.byTrackDistance?poi.byTrackDistance.map(y=>{
+                    return crEl('li',{c:'blue-text'},
+                        y.name+': ' +formatDistance(y.toTrackDistance+y.fromTrackDistance+y.onTrackDistance),
+                        crEl('ul',{c:'browser-default'},
+                            y.toTrackDistance>50?new Li(formatDistance(y.toTrackDistance)+' oт текущего места до трека'):null,
+                            new Li(formatDistance(y.onTrackDistance)+' по треку;'),
+                            y.fromTrackDistance>50?new Li(formatDistance(y.fromTrackDistance)+' oт трека до точки «'+poi.name+'»;'):null
+                            )
+                        )
+                }):'~')
+            )
+        ))
         .openOn(map);
-    map.setView(JSON.parse(point.coordinates), 16);
+    map.setView(JSON.parse(poi.coordinates), 15);
+    app.msg(new Date(Date.parse(ls.get('lastPositionTime'))).toLocaleString())
 }

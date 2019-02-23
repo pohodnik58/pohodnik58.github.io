@@ -35,6 +35,10 @@ router
             modules.use('points')
         },
 
+        'welcome': function () {
+            modules.use('welcome')
+        },
+
         '*': function () {
             modules.use('welcome')
         }

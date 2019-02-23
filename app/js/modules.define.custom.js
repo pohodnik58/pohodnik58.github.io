@@ -18,3 +18,6 @@ modules.define('points',{
 modules.define('about',{
     files:['pages/about.js']
 });
+modules.define('pointsPosition',{
+    files:['js/points_position.js']
+});
