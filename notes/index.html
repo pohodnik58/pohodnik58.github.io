@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Заметки походника</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#fe4542">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Firebase CDN (опционально) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <h1>poh·notes <span id="offlineBadge">offline ready</span></h1>
+  <div class="geo-status" id="geoStatus">...</div>
+</header>
+
+<!-- Панель аудиозаписи -->
+<dialog id="voiceNoteAddModal">
+  <div class="timer" id="timerDisplay">00:00.0</div>
+  <div class="btn-group">
+    <button id="recordBtn" class="btn-primary">🎤 Начать запись</button>
+  </div>
+  
+</dialog>
+
+<!-- Панель текстовой заметки -->
+<dialog id="textNoteAddModal">
+  <textarea id="textNoteContent" rows="3" placeholder="Текст заметки..."></textarea>
+  <div class="btn-group">
+    <button id="saveTextBtn" class="btn-primary">📝 Сохранить текстовую заметку</button>
+  </div>
+  <div class="info-text" id="textInfo"></div>
+</dialog>
+
+<dialog id="noteViewModal">
+</dialog>
+
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin: 0.5rem 0 0.2rem;">
+  <h2 style="font-weight: 500;">📋 Заметки</h2>
+  <button id="uploadAllBtn" class="small-btn" style="background: var(--brand); color: white;">☁️ Выгрузить все</button>
+</div>
+<div id="notesContainer" class="notes-list">
+  <div class="empty-msg">✨ Нет заметок. Создайте голосовую или текстовую</div>
+</div>
+<aside>
+  <button id="fabMicrophone">🎤</button>
+  <button id="fabText">📝</button>
+</aside>
+<footer></footer>
+
+<script src="crEl.js"></script>
+<script src="db.js"></script>
+<script src="scripts.js"></script>
+</body>
+</html>
