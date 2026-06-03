@@ -5,17 +5,17 @@ const STORE_NAME = 'notes';
 let db = null;
 
 function initDB() {
-return new Promise((resolve, reject) => {
-  const request = indexedDB.open(DB_NAME, DB_VERSION);
-  request.onerror = (e) => reject('DB error: ' + e.target.error);
-  request.onsuccess = (e) => { db = e.target.result; resolve(db); };
-  request.onupgradeneeded = (e) => {
-    const dbRef = e.target.result;
-    if (!dbRef.objectStoreNames.contains(STORE_NAME)) {
-      dbRef.createObjectStore(STORE_NAME, { keyPath: 'id' });
-    }
-  };
-});
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = (e) => reject('DB error: ' + e.target.error);
+    request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    request.onupgradeneeded = (e) => {
+      const dbRef = e.target.result;
+      if (!dbRef.objectStoreNames.contains(STORE_NAME)) {
+        dbRef.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+    };
+  });
 }
 
 async function saveNote(note) {

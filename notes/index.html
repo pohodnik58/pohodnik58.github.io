@@ -4,57 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Заметки походника</title>
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#fe4542">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <!-- Firebase CDN (опционально) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <article>
+    <header>
+      <h1>Заметки</h1>
+      <div id="geoStatus">...</div>
+      <button class="btn btn-outline" id="uploadAllBtn">☁️ Выгрузить все</button>
+    </header>
+    <div id="notesContainer">
+      ✨ Нет заметок. Создайте голосовую или текстовую
+    </div>
+    <aside>
+      <button class="btn btn-primary" id="fabMicrophone">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
+          <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
+          <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5"/>
+        </svg>
+      </button>
+      <button class="btn btn-primary" id="fabText">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+          <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+          <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+        </svg>
+      </button>
+    </aside>
+  </article>
 
-<header>
-  <h1>poh·notes <span id="offlineBadge">offline ready</span></h1>
-  <div class="geo-status" id="geoStatus">...</div>
-</header>
+  <dialog id="voiceNoteAddModal">
+    <div class="timer" id="timerDisplay">00:00.0</div>
+    <button id="recordBtn" class="btn btn-primary">🎤 Начать запись</button>
+  </dialog>
 
-<!-- Панель аудиозаписи -->
-<dialog id="voiceNoteAddModal">
-  <div class="timer" id="timerDisplay">00:00.0</div>
-  <div class="btn-group">
-    <button id="recordBtn" class="btn-primary">🎤 Начать запись</button>
-  </div>
-  
-</dialog>
+  <dialog id="textNoteAddModal">
+    <textarea id="textNoteContent" rows="3" placeholder="Текст заметки..."></textarea>
+    <button id="saveTextBtn" class="btn btn-primary">📝 Сохранить текстовую заметку</button>
+    <div class="info-text" id="textInfo"></div>
+  </dialog>
 
-<!-- Панель текстовой заметки -->
-<dialog id="textNoteAddModal">
-  <textarea id="textNoteContent" rows="3" placeholder="Текст заметки..."></textarea>
-  <div class="btn-group">
-    <button id="saveTextBtn" class="btn-primary">📝 Сохранить текстовую заметку</button>
-  </div>
-  <div class="info-text" id="textInfo"></div>
-</dialog>
+  <dialog id="noteViewModal"></dialog>
 
-<dialog id="noteViewModal">
-</dialog>
-
-<div style="display: flex; justify-content: space-between; align-items: baseline; margin: 0.5rem 0 0.2rem;">
-  <h2 style="font-weight: 500;">📋 Заметки</h2>
-  <button id="uploadAllBtn" class="small-btn" style="background: var(--brand); color: white;">☁️ Выгрузить все</button>
-</div>
-<div id="notesContainer" class="notes-list">
-  <div class="empty-msg">✨ Нет заметок. Создайте голосовую или текстовую</div>
-</div>
-<aside>
-  <button id="fabMicrophone">🎤</button>
-  <button id="fabText">📝</button>
-</aside>
-<footer></footer>
-
-<script src="crEl.js"></script>
-<script src="db.js"></script>
-<script src="scripts.js"></script>
+  <script src="crEl.js"></script>
+  <script src="db.js"></script>
+  <script src="firebase.js"></script>
+  <script src="pwa.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>

@@ -1,24 +1,4 @@
 (function(){
-    // ----------------------------- Firebase (опционально) -----------------------------
-    const firebaseConfig = {
-      apiKey: "ВАШ_API_KEY",
-      authDomain: "ВАШ_PROJECT.firebaseapp.com",
-      projectId: "ВАШ_PROJECT_ID",
-      storageBucket: "ВАШ_BUCKET.appspot.com",
-      appId: "ВАШ_APP_ID"
-    };
-    let storageRef = null;
-    let firebaseInitialized = false;
-    if (typeof firebase !== 'undefined' && firebaseConfig.apiKey !== "ВАШ_API_KEY") {
-      try {
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        storageRef = firebase.storage().ref();
-        firebaseInitialized = true;
-      } catch(e) { console.warn(e); }
-    }
-
-  
-
     let mediaRecorder = null;
     let audioChunks = [];
     let recordingStartTime = null;
@@ -40,13 +20,11 @@
     const voiceNoteAddModal = document.getElementById('voiceNoteAddModal');
     const noteViewModal = document.getElementById('noteViewModal');
 
-   
-
     // ----------------------------- Вспомогательные -----------------------------
     function formatDuration(sec) {
       const minutes = Math.floor(sec / 60);
       const seconds = Math.floor(sec % 60);
-      return `${minutes>0?minutes+':':''}${seconds.toString().padStart(2,'0')}с`;
+      return `${minutes>0?minutes+':':''}${seconds.toString().padStart(2,'0')} сек`;
     }
 
     function formatFileSize(bytes) {
@@ -78,26 +56,31 @@
 
     async function showNote(note) {
       noteViewModal.innerHTML = '';
-      noteViewModal.append(crEl('section',
-        crEl('h1', {}, note.id),
+      noteViewModal.append(crEl('section',{s:{display:'flex', flexDirection:'column', gap:'8px'}},
+        crEl('h4', {s:{margin:'0'}}, note.id),
         crEl('textarea', {placeholder:'Текст', e:{change:async (e)=>{
           await updateNote(note.id, { text: e.target.value })
         }}}, note.text),
-        crEl('div', {},
+        crEl('div', {s:{display:'flex', gap:'8px'}},
           crEl('span', {}, 'Дата'),
           crEl('span', {}, new Date(note.timestamp).toLocaleString())
         ),
         note.type === 'audio' && crEl('aside', {},
-          crEl('h4',{},
+          crEl('h4',{s:{margin:0}},
             note.mimeType || 'audio/webm',
             ' ',
             formatDuration(note.duration),
-            ' ',
+            ' / ',
             formatFileSize(note.audioBuffer?.byteLength)
           ),
-          note?.audioBuffer && crEl('audio', {controls:true, src:URL.createObjectURL(new Blob([note.audioBuffer], { type: note.mimeType || 'audio/webm' }))}),
+          note?.audioBuffer && crEl({s:{display:'flex', gap:'8px', margin:'8px 0'}}, 
+            crEl('audio', {
+              s:{flexGrow: 1},
+              controls:true,
+              src:URL.createObjectURL(new Blob([note.audioBuffer], { type: note.mimeType || 'audio/webm' }))
+            }),
         
-          crEl('button',{e:{
+          crEl('button',{c:'btn btn-outline',e:{
             click: (e) => {
               if (note?.audioBuffer) {
                 const blob = new Blob([note.audioBuffer], { type: note.mimeType || 'audio/webm' });
@@ -111,14 +94,15 @@
                 setTimeout(() => URL.revokeObjectURL(url), 100);
               } else alert('Файл недоступен');
             }
-          }},'Download')
+          }},'Download'))
         ),
         note.lat && note.lng && crEl('div',
           crEl('a',{href: `geo:${note.lat},${note.lng}`}, `${note.lat.toFixed(5)}, ${note.lng.toFixed(5)}`)
         ),
-        crEl('footer', {},
-          crEl('button',{e:{
+        crEl('footer', {s:{display:'flex', justifyContent:'space-between', gap:'8px'}},
+          crEl('button',{c:'btn btn-secondary', e:{
             click: async (e) => {
+              e.target.disabled = true;
               if (confirm('Удалить заметку?')) {
                 await deleteNoteById(note.id);
                 noteViewModal.close();
@@ -126,63 +110,20 @@
               }
             }
           }},'Delete'),
-          crEl('button',{e:{
+          note.type === 'audio' && !note.uploadedAt && crEl('button',{c:'btn btn-secondary',e:{
             click: async (e) => {
+              e.target.disabled = true;
               await uploadSingleNote(note);
+              e.target.disabled = false;
+              setTimeout(async ()=> {
+                noteViewModal.close();
+              renderNotesList();
+              },600);
             }
-          }},'Upload')
+          }},'Upload to cloud ☁️')
         )
       ));
       noteViewModal.showModal();
-    }
-
-    // Выгрузка (без изменений)
-    async function uploadToCloud(note) {
-      if (!navigator.onLine) throw new Error('Нет интернета');
-      if (!firebaseInitialized || !storageRef) {
-        await new Promise(r => setTimeout(r, 500));
-        return { downloadURL: `mock://cloud/${note.id}_${Date.now()}`, uploadedAt: Date.now() };
-      }
-      const blob = new Blob([note.audioBuffer], { type: note.mimeType || 'audio/webm' });
-      const fileName = `notes/${note.id}_${note.timestamp}.webm`;
-      const fileRef = storageRef.child(fileName);
-      const snapshot = await fileRef.put(blob);
-      const downloadURL = await snapshot.ref.getDownloadURL();
-      return { downloadURL, uploadedAt: Date.now() };
-    }
-
-    async function uploadSingleNote(note) {
-      if (!navigator.onLine) { alert('Нет интернета'); return false; }
-      if (!note || note.type !== 'audio') { alert('Только аудио можно выгрузить'); return false; }
-      if (note.downloadURL) { alert('Уже выгружена'); return true; }
-      try {
-        const { downloadURL, uploadedAt } = await uploadToCloud(note);
-        await updateNote(noteId, { downloadURL, uploadedAt });
-        await renderNotesList();
-        return true;
-      } catch(e) {
-        alert('Ошибка выгрузки: ' + e.message);
-        return false;
-      }
-    }
-
-    async function uploadAllNotes() {
-      if (!navigator.onLine) { alert('Нет интернета'); return; }
-      const notes = await getAllNotes();
-      const notUploaded = notes.filter(n => n.type === 'audio' && !n.downloadURL);
-      if (!notUploaded.length) { alert('Все аудиозаметки выгружены'); return; }
-      geoStatusSpan.innerText = `☁️ Выгружаю ${notUploaded.length}...`;
-      let success = 0;
-      for (const note of notUploaded) {
-        try {
-          const { downloadURL, uploadedAt } = await uploadToCloud(note);
-          await updateNote(note.id, { downloadURL, uploadedAt });
-          success++;
-        } catch(e) { console.warn(e); }
-      }
-      await renderNotesList();
-      geoStatusSpan.innerText = `✅ Выгружено ${success} из ${notUploaded.length}`;
-      setTimeout(() => { if(!isRecording) geoStatusSpan.innerText = `📍 GPS: готов`; }, 3000);
     }
 
     // ----------------------------- Отрисовка списка -----------------------------
@@ -193,34 +134,47 @@
         notesContainer.innerHTML = `<div class="empty-msg">Нет заметок</div>`;
         return;
       }
+      const needToUpload = notes.filter(x =>x.type==='audio' && !x.uploadedAt)
+      uploadAllBtn.textContent = `☁️ Выгрузить все ${needToUpload.length ? ` (${needToUpload.length})`:''}`
 
       notesContainer.innerHTML = '';
 
       notesContainer.append(crEl('ul',{c:'notes-list'},
         notes.map((note)=>{
           const date = new Date(note.timestamp);
-          const timeStr = date.toLocaleString(undefined, { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short' });
+          const timeStr = date.toLocaleString(
+            undefined,
+            {
+              hour:'2-digit',
+              minute:'2-digit',
+              day:'2-digit',
+              month: '2-digit'
+          });
 
           return crEl('li', {e:{click: ()=> showNote(note)}},
-            crEl('strong', {}, timeStr),
-            crEl('span', crEl('em', note.text || `Rec ${formatDuration(note.duration)}`)),
-            note.type === 'audio' && crEl('aside', {},
+            crEl('strong', {c:'date'}, timeStr),
+            crEl('span',{c:'text'},
+              crEl('em', note.text || `Rec ${formatDuration(note.duration)}`)
+            ),
+            note.type === 'audio' && crEl('aside', {c:'audio'},
               formatDuration(note.duration),
+              ' / ',
               formatFileSize(note.audioBuffer?.byteLength)
             ),
-            crEl('small', {}, note.lat && note.lng ? `📍` : '🌐')
+            crEl('small', {c:'geo', s:'text-align: end'}, 
+              note.lat && note.lng ? `📍` : '🌐',
+              '  ',
+              note.downloadURL && '✅'
+            )
           )
         })
       ));
     }
 
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-    // ----------------------------- Аудиозапись (одна кнопка) -----------------------------
+    // ----------------------------- Аудиозапись -----------------------------
     async function startRecording() {
       if (isRecording) return;
       try {
-
         updateCurrentLocation();
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaStream = stream;
@@ -232,7 +186,9 @@
         if (!mimeType) mimeType = 'audio/webm';
         mediaRecorder = new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 32000 });
         audioChunks = [];
-        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
         mediaRecorder.onstop = async () => {
           const rawBlob = new Blob(audioChunks, { type: mimeType });
           const arrayBuffer = await rawBlob.arrayBuffer();
@@ -261,11 +217,9 @@
           }
           isRecording = false;
           recordBtn.textContent = '🎤 Начать запись';
-          recordBtn.classList.remove('btn-secondary');
-          recordBtn.classList.add('btn-primary');
-          geoStatusSpan.innerHTML = `📍 GPS: готов`;
           voiceNoteAddModal.close()
         };
+    
         mediaRecorder.start(1000);
         recordingStartTime = Date.now();
         isRecording = true;
@@ -295,8 +249,6 @@
         if (timerInterval) clearInterval(timerInterval);
         isRecording = false;
         recordBtn.textContent = '🎤 Начать запись';
-        recordBtn.classList.remove('btn-secondary');
-        recordBtn.classList.add('btn-primary');
         if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
         mediaStream = null;
       }
@@ -307,13 +259,13 @@
       else startRecording();
     }
 
-    // ----------------------------- Текстовая заметка (с координатами) -----------------------------
+    // ------ Текстовая заметка ------------
     async function saveTextNote() {
       const text = textNoteContent.value.trim();
       if (!text) { textInfo.innerText = 'Введите текст'; return; }
   
       const timestamp = Date.now();
-      // Имя не запрашиваем – оно будет равно тексту (отображается в списке)
+  
       const note = {
         id: crypto.randomUUID(),
         type: 'text',
@@ -330,70 +282,15 @@
       await renderNotesList();
     }
 
-    // ----------------------------- Глубокие ссылки и shortcuts -----------------------------
-    function handleDeepLink(url) {
-      try {
-        const u = new URL(url);
-        if (u.protocol === 'pohodnik:') {
-          if (u.pathname === '//new-voice-note' || u.pathname === '/new-voice-note') {
-            voiceNoteAddModal.showModal();
-            startRecording();
-          } else if (u.pathname === '//new-text-note' || u.pathname === '/new-text-note') {
-            textNoteAddModal.showModal()
-            textNoteContent.focus();
-            textInfo.innerText = '📝 Готово к вводу текстовой заметки';
-            setTimeout(() => textInfo.innerText = '', 3000);
-          }
-        }
-      } catch(e) {}
-    }
-
-    window.addEventListener('load', () => {
-      if (window.location.protocol === 'pohodnik:') handleDeepLink(window.location.href);
-    });
-    window.addEventListener('message', (e) => { if (e.data && e.data.type === 'deep-link') handleDeepLink(e.data.url); });
-
-    function handleUrlParams() {
-      const params = new URLSearchParams(window.location.search);
-      const action = params.get('action');
-      if (action === 'voice') startRecording();
-      else if (action === 'text') textNoteContent.focus();
-    }
-
-    // ----------------------------- Service Worker (PWA) -----------------------------
-    function installServiceWorker() {
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .then((registration) => {
-            registration.addEventListener("updatefound", () => {
-              // If updatefound is fired, it means that there's
-              // a new service worker being installed.
-              const installingWorker = registration.installing;
-              console.log(
-                "A new service worker is being installed:",
-                installingWorker,
-              );
-
-              // You can listen for changes to the installing service worker's
-              // state via installingWorker.onstatechange
-            });
-          })
-          .catch((error) => {
-            console.error(`Service worker registration failed: ${error}`);
-          });
-      } else {
-        console.error("Service workers are not supported.");
-      }    
-  }
-
-    // ----------------------------- Инициализация -----------------------------
     window.addEventListener('load', async () => {
       await initDB();
       await renderNotesList();
       recordBtn.onclick = toggleRecording;
       saveTextBtn.onclick = saveTextNote;
-      uploadAllBtn.onclick = uploadAllNotes;
+      uploadAllBtn.onclick = async () => {
+        await uploadAllNotes();
+        await renderNotesList();
+      }
       fabMicrophone.onclick = () => {
         voiceNoteAddModal.showModal();
         startRecording();
@@ -405,8 +302,6 @@
 
       installServiceWorker();
       handleUrlParams();
-      window.addEventListener('online', () => document.getElementById('offlineBadge').innerText = 'online ready');
-      window.addEventListener('offline', () => document.getElementById('offlineBadge').innerText = 'offline mode');
 
     });
-  })();
+  })()

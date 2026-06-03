@@ -1,13 +1,205 @@
-:root { --brand: #fe4542; color-scheme: light dark; }
+:root { --brand: #fe4542; color-scheme: light dark;
+
+color-scheme: light dark;  /* Enables native light/dark */
+
+      /* Backgrounds */
+      --bg-base: light-dark(#f8f9fa, #121212);
+      --bg-surface-0: light-dark(#ffffff, #1e1e1e);
+      --bg-surface-1: light-dark(#f1f3f5, #2a2a2a);
+      --bg-surface-2: light-dark(#e9ecef, #333333);
+
+      /* Text colors */
+      --text-primary: light-dark(#212529, #e9ecef);
+      --text-secondary: light-dark(#495057, #adb5bd);
+      --text-muted: light-dark(#6c757d, #868e96);
+
+      /* Borders & Dividers */
+      --border-light: light-dark(#dee2e6, #3e3e3e);
+      --border-strong: light-dark(#adb5bd, #5a5a5a);
+
+      /* Shadows (darker shadows in dark mode for depth) */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      
+      /* Adapt shadows for dark mode (more pronounced) */
+      @media (prefers-color-scheme: dark) {
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+        --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.6);
+        --shadow-lg: 0 15px 20px -5px rgba(0, 0, 0, 0.7);
+      }
+
+      /* Button colors (semantic) */
+      --btn-primary-bg: light-dark(#0d6efd, #0b5ed7);
+      --btn-primary-hover: light-dark(#0b5ed7, #0a58ca);
+      --btn-primary-text: #ffffff;
+
+      --btn-secondary-bg: light-dark(#6c757d, #495057);
+      --btn-secondary-hover: light-dark(#5c636a, #3d4249);
+      --btn-secondary-text: #ffffff;
+
+      --btn-outline-border: light-dark(#6c757d, #adb5bd);
+      --btn-outline-text: light-dark(#6c757d, #e9ecef);
+      --btn-outline-hover-bg: light-dark(#e9ecef, #2a2a2a);
+
+      --btn-subtle-bg: light-dark(#e9ecef, #2a2a2a);
+      --btn-subtle-hover: light-dark(#dee2e6, #3a3a3a);
+      --btn-subtle-text: light-dark(#212529, #e9ecef);
+
+      --fab-bg: light-dark(#0d6efd, #0b5ed7);
+      --fab-hover: light-dark(#0b5ed7, #0a58ca);
+      --fab-text: #ffffff;
+      --fab-shadow: var(--shadow-lg);
+
+/* ========= BUTTON STYLES (fully adaptive) ========= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.25;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      background: transparent;
+    }
+
+    /* Primary button */
+    .btn-primary {
+      background-color: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      border-color: var(--btn-primary-bg);
+    }
+    .btn-primary:hover {
+      background-color: var(--btn-primary-hover);
+      border-color: var(--btn-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Secondary button */
+    .btn-secondary {
+      background-color: var(--btn-secondary-bg);
+      color: var(--btn-secondary-text);
+      border-color: var(--btn-secondary-bg);
+    }
+    .btn-secondary:hover {
+      background-color: var(--btn-secondary-hover);
+      border-color: var(--btn-secondary-hover);
+    }
+
+    /* Outline button */
+    .btn-outline {
+      background: transparent;
+      border-color: var(--btn-outline-border);
+      color: var(--btn-outline-text);
+    }
+    .btn-outline:hover {
+      background-color: var(--btn-outline-hover-bg);
+      border-color: var(--btn-outline-text);
+    }
+
+    /* Subtle / ghost button */
+    .btn-subtle {
+      background-color: var(--btn-subtle-bg);
+      border-color: var(--border-light);
+      color: var(--btn-subtle-text);
+    }
+    .btn-subtle:hover {
+      background-color: var(--btn-subtle-hover);
+    }
+
+    /* Button group (demo spacing) */
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+}
 
 html, body { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  color: light-dark(#333b3c, #efefec);
-  background-color: light-dark(#efefec, #000000);
+  color: var(--text-primary);
+  background-color: var(--bg-base);
 
   accent-color: var(--brand);
+
+  >article {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    width: 100dvw;
+
+    max-width: 800px;
+    margin: 0 auto;
+    >header {
+      height: 54px;
+      display: flex;
+      flex-shrink: 0;
+      padding: 0 16px;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: var(--brand) 1px solid;
+
+      h1 {
+        font-size: 19px;
+        margin: 0;
+      }
+    }
+
+    #notesContainer {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 0 16px;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        li {
+          border-bottom: 1px solid var(--border-light);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          height: 48px;
+
+          .date {
+            width: 120px;
+            flex-shrink: 0;
+          }
+
+          .geo {
+            width: 120px;
+            flex-shrink: 0;
+          }
+
+          .audio {
+            width: 120px;
+            flex-shrink: 0;
+          }
+
+          .text {
+            max-width: 80%;
+            flex-grow: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+  }
 }
 
 #fabMicrophone, #fabText {
@@ -15,12 +207,25 @@ body {
   right: 16px;
   width: 54px;
   height: 54px;
-  border-radius: 50%;
-  text-align: center;
-  font-size: 24px;
-  line-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  box-shadow: var(--fab-shadow);
+  font-weight: 500;
+  gap: 0.5rem;
 
-  border: 1px solid var(--brand);
+      background-color: var(--fab-bg);
+      color: var(--fab-text);
+    
+    &:hover {
+      background-color: var(--fab-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
 }
 
 #fabMicrophone {
@@ -28,4 +233,43 @@ body {
 }
  #fabText {
   bottom: 16px;
+ }
+
+ dialog {
+  background: var(--bg-surface-0);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  &[open] {
+        display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  }
+ }
+
+  #voiceNoteAddModal {
+      button {
+    justify-content: center;
+  }
+  }
+
+    textarea {
+    padding: 8px;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-width: 400px;
+    border-radius: 3px;
+    height: 120px;
+    outline: none;
+    border: 1px solid var(--border-light);
+  }
+ #textNoteAddModal {
+
+
+
+  button {
+    justify-content: center;
+  }
  }
