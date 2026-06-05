@@ -20,7 +20,7 @@ async function uploadToCloud(note) {
   formData.append('created_at', getSQLDate(new Date(note.timestamp), true));
   formData.append('coordinates', [note.lat, note.lng].filter(Boolean).join(','))
 
-  const response = await fetch('http://localhost:8002/ajax/hiking/notes/note_add.php', 
+  const response = await fetch('http://pohodnik.tk/ajax/hiking/notes/note_add.php', 
     { method: 'POST', body: formData });
     const data = await response.json();
     if (data.success) {
