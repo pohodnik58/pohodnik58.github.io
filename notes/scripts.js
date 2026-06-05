@@ -299,6 +299,65 @@
         updateCurrentLocation();
         textNoteAddModal.showModal();
       }
+const authState = document.getElementById('authState')
+      authState.innerHTML = '';
+      authState.append(crEl('button', {e:{click: async () => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.BarcodeDetector){
+          console.warn("Your device does not support the Barcode Detection API. Try again on Chrome Desktop or Android");
+        sessionStorage.setItem('note_id_hiking', prompt('id_hiking'))
+        sessionStorage.setItem('note_upload_token', prompt('token'))
+        } else {
+          qrReaderModal.showModal();
+          const video = document.getElementById('barcode-detection-video');
+          const stream = await navigator.mediaDevices.getUserMedia({ video: {facingMode: "environment"}});
+          video.srcObject = stream;
+          video.play();
+ 
+          const barcodeDetector = new BarcodeDetector({formats: ["qr_code"] });
+ 
+          video.addEventListener('loadedmetadata', async function(){
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const context = canvas.getContext('2d');
+ 
+            const checkForQrCode = async function(){
+              context.drawImage(video, 0, 0, canvas.width, canvas.height);
+              const barcodes = await barcodeDetector.detect(canvas);
+                        
+              if (barcodes.length > 0) {
+                  let barcodeData = barcodes[0].rawValue;
+                  try {
+                    const [hikingId, token] = barcodeData.split(',');
+                    if (Number.isFinite(+hikingId)) {
+                      sessionStorage.setItem('note_id_hiking', hikingId);
+                      sessionStorage.setItem('note_upload_token', token);
+
+                      alert('successfully auth for hiking ' + hikingId);
+                      qrReaderModal.hide();
+                    }
+                  } catch (e) {
+                    console.error(e)
+                  }
+                  console.log("Detected QR code with the following content: "+barcodeData); 
+              };
+            
+              requestAnimationFrame(checkForQrCode);
+            };
+        
+          checkForQrCode();
+          });
+          document.getElementById('barcode-detection-manually').onclick = () => {
+            sessionStorage.setItem('note_id_hiking', prompt('id_hiking'))
+            sessionStorage.setItem('note_upload_token', prompt('token'))
+          }
+        }
+     
+
+ 
+        
+      }}}, '👨‍💻'))
 
       installServiceWorker();
       handleUrlParams();

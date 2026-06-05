@@ -1,4 +1,12 @@
-// Выгрузка (без изменений)
+export function getSQLDate(jsDate, utc = false) {
+  let offset = 0;
+  if (!utc) {
+    const timeOffset = new Date().getTimezoneOffset();
+    offset = timeOffset * 60000;
+  }
+  return new Date(jsDate.getTime() - offset).toISOString().substr(0, 19).replace('T', ' ');
+}
+
 async function uploadToCloud(note) {
   if (!navigator.onLine) throw new Error('Нет интернета');
 
@@ -6,11 +14,11 @@ async function uploadToCloud(note) {
 
   const blob = new Blob([note.audioBuffer], { type: note.mimeType || 'audio/webm' });
   formData.append('voice', blob, `recording-${new Date(note.timestamp).toISOString()}.webm`);
-  formData.append('id_hiking', 87);
+  formData.append('id_hiking', sessionStorage.getItem('note_id_hiking'));
+  formData.append('token', sessionStorage.getItem('note_upload_token'));
   formData.append('comment', note.text);
-  formData.append('created_at', new Date(note.timestamp).toISOString());
+  formData.append('created_at', getSQLDate(new Date(note.timestamp), true));
   formData.append('coordinates', [note.lat, note.lng].filter(Boolean).join(','))
-
 
   const response = await fetch('http://localhost:8002/ajax/hiking/notes/note_add.php', 
     { method: 'POST', body: formData });
@@ -18,6 +26,7 @@ async function uploadToCloud(note) {
     if (data.success) {
         console.log('Текст:', data);
     } else {
+        alert(data?.error);
         console.error(data.error);
     }
 

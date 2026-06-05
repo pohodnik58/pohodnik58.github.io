@@ -15,6 +15,7 @@
     <header>
       <h1>Заметки</h1>
       <div id="geoStatus">...</div>
+      <span id="authState"></span>
       <button class="btn btn-outline" id="uploadAllBtn">☁️ Выгрузить все</button>
     </header>
     <div id="notesContainer">
@@ -45,6 +46,12 @@
     <textarea id="textNoteContent" rows="3" placeholder="Текст заметки..."></textarea>
     <button id="saveTextBtn" class="btn btn-primary">📝 Сохранить текстовую заметку</button>
     <div class="info-text" id="textInfo"></div>
+  </dialog>
+
+    <dialog id="qrReaderModal">
+      <video id="barcode-detection-video" >
+        <br>
+        <button id="barcode-detection-manually">manually</button>
   </dialog>
 
   <dialog id="noteViewModal"></dialog>

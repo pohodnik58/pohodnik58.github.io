@@ -125,7 +125,7 @@ color-scheme: light dark;  /* Enables native light/dark */
     }
 }
 
-html, body { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; box-sizing: border-box; height: 100dvh; }
 
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
